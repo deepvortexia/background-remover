@@ -81,6 +81,7 @@ function AppContent() {
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
   const [showNotification, setShowNotification] = useState(false)
   const [toast, setToast] = useState<{title:string;message:string;type:'success'|'error'|'warning'}|null>(null)
+  const [isFavorited, setIsFavorited] = useState(false)
   
   const { user, session, loading } = useAuth()
   const { hasCredits, refreshProfile } = useCredits()
@@ -150,6 +151,7 @@ function AppContent() {
     setError('')
     setToast(null)
     setGeneratedImage('')
+    setIsFavorited(false)
     setLoadingMessage(loadingMessages[Math.floor(Math.random() * loadingMessages.length)])
     try {
       const token = session?.access_token
@@ -219,6 +221,25 @@ function AppContent() {
   }
 
   const regenerate = async () => { if (prompt) await generateEmoticon() }
+
+  const handleAddToFavorites = async () => {
+    if (!generatedImage) return
+    if (!session?.access_token) { setError('Please sign in to add favorites'); return }
+    try {
+      const response = await fetch('/api/favorites', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+        body: JSON.stringify({ imageUrl: generatedImage, prompt }),
+      })
+      if (response.ok) {
+        setIsFavorited(true)
+      } else {
+        setError('Failed to add to favorites')
+      }
+    } catch {
+      setError('Failed to add to favorites')
+    }
+  }
 
   const downloadImage = async () => {
     if (!generatedImage) return
@@ -319,6 +340,13 @@ function AppContent() {
             </div>
             <div className="action-buttons">
               <button onClick={downloadImage} className="action-btn download-btn"><span>📥</span> Download</button>
+              <button
+                onClick={handleAddToFavorites}
+                className={`action-btn favorite-btn ${isFavorited ? 'favorited' : ''}`}
+                disabled={isFavorited}
+              >
+                <span>{isFavorited ? '✅' : '⭐'}</span> {isFavorited ? 'Added!' : 'Favorite'}
+              </button>
               <button onClick={regenerate} className="action-btn regenerate-btn"><span>🔄</span> Regenerate</button>
               <button className="action-btn copy-btn" onClick={() => { navigator.clipboard.writeText(generatedImage); alert('Image URL copied!') }}>
                 <span>🔗</span> Copy URL
