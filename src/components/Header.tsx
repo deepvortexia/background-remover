@@ -87,7 +87,7 @@ export default function Header() {
         </div>
 
         <h1 className="brand-title-text">DΞΞP VORTΞX AI</h1>
-        <p className="primary-tagline">Your AI Tools Ecosystem</p>
+        <p className="primary-tagline">✨ Turn words into emoticons instantly</p>
 
         <div className="hub-pills-container">
           <div className="hub-pill credits-pill">

@@ -108,12 +108,13 @@
 }
 
 .primary-tagline {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 1.3rem;
-  color: #E8C87C;
-  margin: 0.5rem 0 2rem;
-  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: #D4AF37;
+  margin: 0.4rem 0 1.5rem;
+  font-weight: 600;
   text-align: center;
+  letter-spacing: 0.3px;
 }
 
 .hub-pills-container {
@@ -242,7 +243,7 @@
   .orbit-ring-two { width: 140px; height: 140px; }
   .orbit-ring-three { width: 160px; height: 160px; }
   .brand-title-text { font-size: 1.2rem; letter-spacing: 1px; margin: 1rem 0 0.3rem; }
-  .primary-tagline { display: none; }
+  .primary-tagline { font-size: 0.85rem; margin: 0.3rem 0 1.2rem; }
   .hub-pills-container { flex-direction: column; width: 100%; max-width: 300px; gap: 0.75rem; }
   .hub-pill { width: 100%; justify-content: center; padding: 0.7rem 1rem; }
   .profile-name { display: inline; }
