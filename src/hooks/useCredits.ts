@@ -18,6 +18,9 @@ export const useCredits = () => {
       // The API will handle the actual deduction on the server side
       // This just triggers a refresh after the API call
       await refreshProfile()
+      if (window.parent !== window) {
+        window.parent.postMessage({ type: 'deepvortex-credits-updated' }, 'https://deepvortexai.art')
+      }
       return true
     } catch (error) {
       console.error('Error deducting credit:', error)

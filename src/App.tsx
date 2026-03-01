@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import './App.css'
-import { Gallery } from './components/Gallery'
+import Header from './components/Header'
 import PlatformGuideModal from './components/PlatformGuideModal'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { AuthModal } from './components/AuthModal'
@@ -81,7 +81,6 @@ function AppContent() {
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
   const [showNotification, setShowNotification] = useState(false)
   const [toast, setToast] = useState<{title:string;message:string;type:'success'|'error'|'warning'}|null>(null)
-  const [isGalleryOpen, setIsGalleryOpen] = useState(false)
   
   const { user, session, loading, profile } = useAuth()
   const { hasCredits, refreshProfile } = useCredits()
@@ -237,40 +236,7 @@ function AppContent() {
 
   return (
     <div className={`app ${isLoaded ? 'fade-in' : ''}`}>
-      <header className="app-header">
-        <a href="https://deepvortexai.art" className="back-to-home-link">
-          <span className="back-to-home-text-full">← Back to Home</span>
-          <span className="back-to-home-text-short">← Home</span>
-        </a>
-        <div className="logo-container-magic">
-          <div className="magic-effects-wrapper">
-            <div className="magic-glow"></div>
-            <div className="magic-circles">
-              <div className="circle circle-1"></div>
-              <div className="circle circle-2"></div>
-              <div className="circle circle-3"></div>
-            </div>
-            <div className="magic-particles">
-              {[...Array(6)].map((_, i) => <div key={i} className="magic-particle"></div>)}
-            </div>
-            <img src="/deepgoldremoveetiny.png" alt="Deep Vortex Logo" className="app-logo-large" />
-          </div>
-          <h1 className="brand-text-orbitron">DΞΞP VORTΞX AI</h1>
-          <p className="brand-description">
-            Your AI Tools Ecosystem
-            <span className="brand-subdescription"><br />Start with Emoticons • Chat &amp; Images Coming Soon</span>
-          </p>
-        </div>
-      </header>
-      
-      <div className="action-buttons-section">
-        <button className="action-btn action-btn-signin" onClick={() => setIsAuthModalOpen(true)}>
-          <span className="btn-icon">🔒</span><span>Sign In</span>
-        </button>
-        <button className="action-btn action-btn-favorites" onClick={() => setIsGalleryOpen(true)}>
-          <span className="btn-icon">⭐</span><span>Favorites</span>
-        </button>
-      </div>
+      <Header />
       
       <div className="tools-preview-section">
         <h3 className="tools-preview-title">Complete AI Ecosystem</h3>
@@ -286,7 +252,12 @@ function AppContent() {
             <span className="tool-name">Video</span>
             <span className="tool-status">Coming Soon</span>
           </div>
-          <a href="https://images.deepvortexai.art/" className="tool-card tool-card-link" target="_blank" rel="noopener noreferrer">
+          <a href="https://images.deepvortexai.art/" className="tool-card tool-card-link" onClick={(e) => {
+            if (window.parent !== window) {
+              e.preventDefault()
+              window.parent.postMessage({ type: 'deepvortex-navigate', url: 'https://images.deepvortexai.art/' }, 'https://deepvortexai.art')
+            }
+          }}>
             <span className="tool-badge-available">✅ Available</span>
             <span className="tool-icon">🖼️</span>
             <span className="tool-name">Image Gen</span>
@@ -305,24 +276,6 @@ function AppContent() {
         </div>
       </div>
 
-      {user && profile && (
-        <div className="credits-display-section">
-          <div className="credits-display-content">
-            <div className="credits-info">
-              <span className="credits-icon">💰</span>
-              <span className="credits-amount">{profile.credits || 0} credits</span>
-            </div>
-            <div className="credits-actions">
-              <button className="buy-credits-btn" onClick={() => setIsPricingModalOpen(true)}>
-                <span>💳</span><span>Buy Credits</span>
-              </button>
-              {profile.avatar_url && (
-                <img src={profile.avatar_url} alt={`${profile.full_name || 'User'} avatar`} className="user-avatar-small" />
-              )}
-            </div>
-          </div>
-        </div>
-      )}
       
       <div className="suggestions-compact-section">
         <div className="suggestion-row suggestion-row-desktop">
@@ -356,8 +309,6 @@ function AppContent() {
           </div>
         </div>
       </div>
-      
-      <Gallery isOpen={isGalleryOpen} onClose={() => setIsGalleryOpen(false)} />
       
       <div className="app-container">
         <div className="particles">
