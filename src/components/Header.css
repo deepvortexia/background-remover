@@ -219,12 +219,13 @@
 .retry-pill:hover { border-color: #FFD700; background: rgba(255, 215, 0, 0.05); }
 
 @media (max-width: 768px) {
-  .hub-header { padding: 1.5rem 1rem 1rem; }
-  .logo-display-zone { width: 120px; height: 120px; }
+  .hub-header { padding: 3rem 1rem 1rem; }
+  .back-to-hub-link { font-size: 0.75rem; padding: 0.25rem 0.65rem; }
+  .logo-display-zone { width: 120px; height: 120px; margin: 0 auto 0.5rem; }
   .orbit-ring-one { width: 140px; height: 140px; }
   .orbit-ring-two { width: 160px; height: 160px; }
   .orbit-ring-three { width: 180px; height: 180px; }
-  .brand-title-text { font-size: 1.5rem; letter-spacing: 2px; }
+  .brand-title-text { font-size: 1.5rem; letter-spacing: 2px; margin: 0.4rem 0; }
   .primary-tagline { font-size: 1rem; }
   .hub-pills-container { gap: 0.75rem; }
   .hub-pill { padding: 0.5rem 1rem; font-size: 0.9rem; }
@@ -234,12 +235,13 @@
 }
 
 @media (max-width: 480px) {
-  .hub-header { padding: 1rem 0.5rem 1rem; }
-  .logo-display-zone { width: 100px; height: 100px; }
+  .hub-header { padding: 2.5rem 0.5rem 1rem; }
+  .back-to-hub-link { font-size: 0.7rem; padding: 0.2rem 0.5rem; }
+  .logo-display-zone { width: 100px; height: 100px; margin: 0 auto 0.4rem; }
   .orbit-ring-one { width: 120px; height: 120px; }
   .orbit-ring-two { width: 140px; height: 140px; }
   .orbit-ring-three { width: 160px; height: 160px; }
-  .brand-title-text { font-size: 1.2rem; letter-spacing: 1px; }
+  .brand-title-text { font-size: 1.2rem; letter-spacing: 1px; margin: 0.3rem 0; }
   .primary-tagline { display: none; }
   .hub-pills-container { flex-direction: column; width: 100%; max-width: 300px; gap: 0.75rem; }
   .hub-pill { width: 100%; justify-content: center; padding: 0.7rem 1rem; }
