@@ -676,6 +676,24 @@ body {
   line-height: 1;
 }
 
+/* Quick Ideas grid: 4 cols desktop, 2 cols mobile */
+.quick-ideas-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+.quick-idea-btn {
+  justify-content: flex-start;
+  width: 100%;
+}
+
+@media (max-width: 767px) {
+  .quick-ideas-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 /* Mobile vs Desktop Suggestions */
 .suggestion-row-desktop {
   display: block;

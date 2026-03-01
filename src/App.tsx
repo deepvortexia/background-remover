@@ -44,21 +44,14 @@ const popularStyles = [
 ];
 
 const quickIdeas = [
-  { emoji: '👑', text: 'Happy cat wearing crown' },
-  { emoji: '🍕', text: 'Robot eating pizza slice' },
-  { emoji: '😎', text: 'Panda with cool sunglasses' },
-  { emoji: '☕', text: 'Unicorn drinking hot coffee' },
-  { emoji: '🎸', text: 'Ninja playing electric guitar' },
-  { emoji: '🚀', text: 'Astronaut riding a rocket' },
-  { emoji: '🪄', text: 'Fox wizard with wand' },
-  { emoji: '🎩', text: 'Penguin wearing top hat' },
-  { emoji: '🎂', text: 'Dragon blowing birthday candles' },
-  { emoji: '🧘', text: 'Sloth doing yoga pose' },
-  { emoji: '🌌', text: 'Monkey astronaut in space' },
-  { emoji: '🍝', text: 'Bunny chef cooking pasta' },
-  { emoji: '🦸', text: 'Bear superhero with cape' },
-  { emoji: '📖', text: 'Owl reading magic book' },
-  { emoji: '🛹', text: 'Dinosaur on skateboard' }
+  { emoji: '🧙', text: 'Wizard cat casting spell' },
+  { emoji: '🤖', text: 'Robot crying rainbow tears' },
+  { emoji: '🐉', text: 'Dragon eating sushi roll' },
+  { emoji: '👻', text: 'Ghost playing electric guitar' },
+  { emoji: '🐼', text: 'Panda astronaut floating space' },
+  { emoji: '🐰', text: 'Devil bunny holding flowers' },
+  { emoji: '🦈', text: 'Shark wearing top hat' },
+  { emoji: '👽', text: 'Alien cooking ramen noodles' },
 ];
 
 const CREDIT_REFRESH_ERROR = 'Payment successful, but there was a temporary issue syncing your credits. Please refresh the page to see your updated balance.'
@@ -88,6 +81,7 @@ function AppContent() {
 
   const processedSessionIdRef = useRef<string | null>(null)
   const processedPendingSessionRef = useRef(false)
+  const promptInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     setIsLoaded(true)
@@ -270,11 +264,15 @@ function AppContent() {
             ))}
           </div>
         </div>
-        <div className="suggestion-row suggestion-row-desktop">
+        <div className="suggestion-row">
           <h4 className="suggestion-row-title">💡 Quick Ideas</h4>
-          <div className="suggestion-tags-compact">
+          <div className="quick-ideas-grid">
             {quickIdeas.map((item) => (
-              <button key={item.text} className="suggestion-tag-compact" onClick={() => setPrompt(item.text)}>
+              <button
+                key={item.text}
+                className="suggestion-tag-compact quick-idea-btn"
+                onClick={() => { setPrompt(item.text); setTimeout(() => promptInputRef.current?.focus(), 0) }}
+              >
                 <span className="tag-emoji">{item.emoji}</span><span className="tag-text">{item.text}</span>
               </button>
             ))}
@@ -305,6 +303,7 @@ function AppContent() {
           <h3 className="prompt-section-title"><span className="title-icon">✨</span>Create Your Emoticon</h3>
           <div className="prompt-input-container">
             <input
+              ref={promptInputRef}
               className="prompt-input-enhanced"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
