@@ -82,7 +82,7 @@ function AppContent() {
   const [showNotification, setShowNotification] = useState(false)
   const [toast, setToast] = useState<{title:string;message:string;type:'success'|'error'|'warning'}|null>(null)
   
-  const { user, session, loading, profile } = useAuth()
+  const { user, session, loading } = useAuth()
   const { hasCredits, refreshProfile } = useCredits()
 
   const processedSessionIdRef = useRef<string | null>(null)
