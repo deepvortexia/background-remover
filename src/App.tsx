@@ -21,28 +21,6 @@ const loadingMessages = [
   "Generating awesomeness... 🚀"
 ];
 
-const mobileSuggestions = [
-  { emoji: '✨', text: 'sparkle' },
-  { emoji: '🎨', text: 'neon' },
-  { emoji: '🔮', text: 'mystical' },
-  { emoji: '⚡', text: 'electric' },
-  { emoji: '🍕', text: 'pizza' },
-  { emoji: '🚀', text: 'rocket' },
-  { emoji: '❤️', text: 'heart' },
-  { emoji: '⭐', text: 'star' }
-];
-
-const popularStyles = [
-  { emoji: '✨', text: 'sparkle' },
-  { emoji: '🎨', text: 'neon' },
-  { emoji: '🔮', text: 'mystical' },
-  { emoji: '⚡', text: 'electric' },
-  { emoji: '🌈', text: 'rainbow' },
-  { emoji: '💎', text: 'crystal' },
-  { emoji: '🌟', text: 'glowing' },
-  { emoji: '🔥', text: 'fire' }
-];
-
 const quickIdeas = [
   { emoji: '🧙', text: 'Wizard cat casting spell' },
   { emoji: '🤖', text: 'Robot crying rainbow tears' },
@@ -254,16 +232,6 @@ function AppContent() {
       <Header />
       
       <div className="suggestions-compact-section">
-        <div className="suggestion-row suggestion-row-desktop">
-          <h4 className="suggestion-row-title">🔥 Popular Styles</h4>
-          <div className="suggestion-tags-compact">
-            {popularStyles.map((item) => (
-              <button key={item.text} className="suggestion-tag-compact" onClick={() => setPrompt(item.text)}>
-                <span className="tag-emoji">{item.emoji}</span><span className="tag-text">{item.text}</span>
-              </button>
-            ))}
-          </div>
-        </div>
         <div className="suggestion-row">
           <h4 className="suggestion-row-title">💡 Quick Ideas</h4>
           <div className="quick-ideas-grid">
@@ -273,16 +241,6 @@ function AppContent() {
                 className="suggestion-tag-compact quick-idea-btn"
                 onClick={() => { setPrompt(item.text); setTimeout(() => promptInputRef.current?.focus(), 0) }}
               >
-                <span className="tag-emoji">{item.emoji}</span><span className="tag-text">{item.text}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="suggestion-row suggestion-row-mobile">
-          <h4 className="suggestion-row-title">🔥 Popular</h4>
-          <div className="suggestion-tags-compact suggestion-tags-mobile">
-            {mobileSuggestions.map((item) => (
-              <button key={item.text} className="suggestion-tag-compact" onClick={() => setPrompt(item.text)}>
                 <span className="tag-emoji">{item.emoji}</span><span className="tag-text">{item.text}</span>
               </button>
             ))}
