@@ -241,23 +241,18 @@ function AppContent() {
       <div className="tools-preview-section">
         <h3 className="tools-preview-title">Complete AI Ecosystem</h3>
         <div className="tools-preview-grid">
-          <div className="tool-card tool-card-active">
+          <a href="https://emoticons.deepvortexai.art" className="tool-card tool-card-active">
             <span className="tool-badge-available">✅ Available</span>
             <span className="tool-icon">😀</span>
             <span className="tool-name">Emoticons</span>
             <span className="tool-button tool-button-current">Current Tool</span>
-          </div>
+          </a>
           <div className="tool-card tool-card-soon">
             <span className="tool-icon">🎥</span>
             <span className="tool-name">Video</span>
             <span className="tool-status">Coming Soon</span>
           </div>
-          <a href="https://images.deepvortexai.art/" className="tool-card tool-card-link" onClick={(e) => {
-            if (window.parent !== window) {
-              e.preventDefault()
-              window.parent.postMessage({ type: 'deepvortex-navigate', url: 'https://images.deepvortexai.art/' }, 'https://deepvortexai.art')
-            }
-          }}>
+          <a href="https://images.deepvortexai.art" className="tool-card">
             <span className="tool-badge-available">✅ Available</span>
             <span className="tool-icon">🖼️</span>
             <span className="tool-name">Image Gen</span>
