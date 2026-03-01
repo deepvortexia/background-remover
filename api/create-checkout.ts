@@ -14,11 +14,11 @@ const supabase = createClient(
 )
 
 const VALID_PACKS = {
-  'Starter':  { priceId: 'price_1T2JElPRCOojlkAvUxkIsMaT', credits: 10 },
-  'Basic':    { priceId: 'price_1T2JGJPRCOojlkAvSIuNcbrz', credits: 30 },
-  'Popular':  { priceId: 'price_1T2JHDPRCOojlkAvePY8B1Oa', credits: 75 },
-  'Pro':      { priceId: 'price_1T2JIvPRCOojlkAvGTd0AEWj', credits: 200 },
-  'Ultimate': { priceId: 'price_1T2JKiPRCOojlkAvIOnW4Qkl', credits: 500 },
+  'Starter':  { priceId: 'price_1T5FPTPRCOojlkAvi1fOqS2M', credits: 10 },
+  'Basic':    { priceId: 'price_1T5FRrPRCOojlkAvyCd4ZHjo', credits: 30 },
+  'Popular':  { priceId: 'price_1T6F5SPRCOojlkAvW8KQY5jj', credits: 75 },
+  'Pro':      { priceId: 'price_1T5FUhPRCOojlkAv3HaP09N6', credits: 200 },
+  'Ultimate': { priceId: 'price_1T6F4zPRCOojlkAv7yVpMsLq', credits: 500 },
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
