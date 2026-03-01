@@ -62,7 +62,7 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             className="auth-modal-logo"
             aria-label="Deep Vortex AI"
           />
-          <h2>Welcome to Deep Vortex</h2>
+          <h2>Welcome to Deep Vortex AI</h2>
           <p>Sign in to get 3 free credits and explore the ecosystem!</p>
         </div>
 
