@@ -1438,6 +1438,23 @@ body {
   color: var(--gold-primary);
 }
 
+.footer-contact-btn {
+  display: inline-block;
+  padding: 0.45rem 1.2rem;
+  border: 1px solid rgba(212, 175, 55, 0.6);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--gold-primary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.footer-contact-btn:hover {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--gold-primary);
+}
+
 .gradient-text {
   background: linear-gradient(135deg, var(--gold-dark), var(--gold-primary), var(--gold-light));
   background-size: 200% 200%;
