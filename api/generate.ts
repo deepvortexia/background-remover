@@ -172,9 +172,35 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       throw new Error('No image generated')
     }
 
-    // Return the first output image
+    // Upload to Supabase Storage for a permanent URL (Replicate URLs expire)
+    let imageUrl: string = result.output[0]
+    try {
+      const imgRes = await fetch(imageUrl)
+      if (imgRes.ok) {
+        const imgBuffer = await imgRes.arrayBuffer()
+        const fileName = `${userId}/${Date.now()}.png`
+        const { error: uploadError } = await supabase.storage
+          .from('generated-images')
+          .upload(fileName, imgBuffer, { contentType: 'image/png', upsert: false })
+        if (!uploadError) {
+          const { data: { publicUrl } } = supabase.storage
+            .from('generated-images')
+            .getPublicUrl(fileName)
+          if (publicUrl) {
+            imageUrl = publicUrl
+            console.log('[generate] Uploaded to Supabase Storage:', imageUrl)
+          }
+        } else {
+          console.error('[generate] Storage upload failed, using Replicate URL:', uploadError)
+        }
+      }
+    } catch (storageErr) {
+      console.error('[generate] Storage error, using Replicate URL:', storageErr)
+    }
+
+    // Return the image (permanent Supabase URL or Replicate fallback)
     return res.status(200).json({
-      image: result.output[0],
+      image: imageUrl,
     })
   } catch (error: any) {
     console.log('[generate] Error:', error?.message || 'Unknown error')
