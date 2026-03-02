@@ -169,12 +169,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       console.error('[remove-background] Storage error, using Replicate URL:', storageErr)
     }
 
-    // Log transaction (non-blocking)
-    supabase
+    // Log transaction (non-blocking, fire-and-forget)
+    void supabase
       .from('generation_logs')
       .insert({ user_id: userId, tool: 'background-remover', created_at: new Date().toISOString() })
-      .then(() => {})
-      .catch(() => {})
 
     return res.status(200).json({ image: imageUrl })
   } catch (error: any) {
