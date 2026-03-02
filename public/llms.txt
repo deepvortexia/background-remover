@@ -1,0 +1,77 @@
+# Deep Vortex AI Emoticon Generator
+
+> Create stunning custom AI emoticons and emoji from simple text descriptions in seconds. Type what you want, get a unique high-quality emoticon instantly.
+
+## URL
+
+https://emoticons.deepvortexai.art/
+
+## About
+
+The Deep Vortex AI Emoticon Generator uses advanced AI to transform text prompts into high-quality custom emoticons and emoji. No design skills needed — just describe your emoticon and the AI creates it.
+
+Part of the Deep Vortex AI ecosystem: https://deepvortexai.art
+
+## Features
+
+- Text-to-emoticon generation using AI
+- High-quality PNG output
+- Instant results (typically 3-5 seconds)
+- One-click download
+- Favorites gallery (save your best creations to the cloud)
+- Local history (recent generations saved automatically)
+- Platform guide for using emoticons on social media
+
+## Compatible Platforms
+
+- Discord (custom server emoji)
+- Telegram (custom stickers)
+- Slack (custom emoji)
+- WhatsApp (stickers)
+- Twitter / X (reactions)
+- TikTok, Instagram, Facebook
+- Any platform supporting custom emoji/stickers
+
+## How to Use
+
+1. Go to https://emoticons.deepvortexai.art/
+2. Sign in or create a free account (2 free credits included)
+3. Type a description of your desired emoticon in the input field
+4. Press Generate
+5. Download the result or save it to your Favorites
+
+## Example Prompts (effective for this tool)
+
+- "Wizard cat casting spell"
+- "Robot crying rainbow tears"
+- "Dragon eating sushi roll"
+- "Ghost playing electric guitar"
+- "Panda astronaut floating in space"
+- "Devil bunny holding flowers"
+- "Shark wearing top hat"
+- "Alien cooking ramen noodles"
+
+## Pricing
+
+- 2 free credits on account creation
+- 1 credit per emoticon generated
+- Additional credits available in packs
+- Payments via Stripe
+
+## API
+
+- Generation endpoint: POST /api/generate (authenticated)
+- Favorites endpoint: GET/POST /api/favorites (authenticated)
+- Authentication: Supabase JWT
+
+## Related Tools
+
+- AI Image Generator: https://images.deepvortexai.art/
+- Deep Vortex AI Hub: https://deepvortexai.art
+
+## Contact
+
+- Email: admin@deepvortexai.xyz
+- TikTok: https://www.tiktok.com/@deepvortexai
+- X (Twitter): https://x.com/deepvortexart
+- Quora: https://deepvortexai.quora.com/

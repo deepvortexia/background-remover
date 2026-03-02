@@ -1,36 +1,13 @@
-// src/App.tsx  (Emoticons)
-// Seul changement : détecter /auth/callback et afficher AuthCallback
-
+// src/App.tsx (Background Remover)
 import { useState, useEffect, useRef } from 'react'
 import './App.css'
 import Header from './components/Header'
-import PlatformGuideModal from './components/PlatformGuideModal'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { AuthModal } from './components/AuthModal'
 import { PricingModal } from './components/PricingModal'
 import { Notification } from './components/Notification'
 import { useCredits } from './hooks/useCredits'
-import { AuthCallback } from './pages/AuthCallback'  // ← NOUVEAU
-
-const loadingMessages = [
-  "Creating magic... ✨",
-  "Brewing pixels... 🎨",
-  "Summoning AI spirits... 🌀",
-  "Crafting your emoji... 🔮",
-  "Mixing colors... 🎭",
-  "Generating awesomeness... 🚀"
-];
-
-const quickIdeas = [
-  { emoji: '🧙', text: 'Wizard cat casting spell' },
-  { emoji: '🤖', text: 'Robot crying rainbow tears' },
-  { emoji: '🐉', text: 'Dragon eating sushi roll' },
-  { emoji: '👻', text: 'Ghost playing electric guitar' },
-  { emoji: '🐼', text: 'Panda astronaut floating space' },
-  { emoji: '🐰', text: 'Devil bunny holding flowers' },
-  { emoji: '🦈', text: 'Shark wearing top hat' },
-  { emoji: '👽', text: 'Alien cooking ramen noodles' },
-];
+import { AuthCallback } from './pages/AuthCallback'
 
 const CREDIT_REFRESH_ERROR = 'Payment successful, but there was a temporary issue syncing your credits. Please refresh the page to see your updated balance.'
 const PENDING_STRIPE_SESSION_KEY = 'pending_stripe_session'
@@ -40,31 +17,27 @@ const cleanUrlParams = () => {
 }
 
 function AppContent() {
-  const [prompt, setPrompt] = useState('')
-  const [generatedImage, setGeneratedImage] = useState('')
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null)
+  const [uploadedImageUrl, setUploadedImageUrl] = useState('')
+  const [resultImage, setResultImage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [isLoaded, setIsLoaded] = useState(false)
-  const [loadingMessage, setLoadingMessage] = useState(loadingMessages[0])
-  const [imagesGenerated, setImagesGenerated] = useState(0)
-  const [isGuideOpen, setIsGuideOpen] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
   const [showNotification, setShowNotification] = useState(false)
-  const [toast, setToast] = useState<{title:string;message:string;type:'success'|'error'|'warning'}|null>(null)
-  const [isFavorited, setIsFavorited] = useState(false)
-  
+  const [toast, setToast] = useState<{ title: string; message: string; type: 'success' | 'error' | 'warning' } | null>(null)
+
   const { user, session, loading } = useAuth()
   const { hasCredits, refreshProfile } = useCredits()
 
   const processedSessionIdRef = useRef<string | null>(null)
   const processedPendingSessionRef = useRef(false)
-  const promptInputRef = useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     setIsLoaded(true)
-    const count = parseInt(localStorage.getItem('images-generated') || '0', 10)
-    setImagesGenerated(count)
   }, [])
 
   useEffect(() => {
@@ -73,7 +46,6 @@ function AppContent() {
       const sessionId = params.get('session_id')
       if (!sessionId) return
       if (processedSessionIdRef.current === sessionId) return
-      console.log('Stripe session_id detected:', sessionId)
       if (loading) return
       processedSessionIdRef.current = sessionId
       if (user) {
@@ -81,8 +53,7 @@ function AppContent() {
           await refreshProfile()
           setShowNotification(true)
           cleanUrlParams()
-        } catch (error) {
-          console.error('Failed to refresh credits after payment:', error)
+        } catch {
           setError(CREDIT_REFRESH_ERROR)
         }
       } else {
@@ -105,7 +76,7 @@ function AppContent() {
           await refreshProfile()
           localStorage.removeItem(PENDING_STRIPE_SESSION_KEY)
           setShowNotification(true)
-        } catch (error) {
+        } catch {
           processedPendingSessionRef.current = false
           setError(CREDIT_REFRESH_ERROR)
         }
@@ -115,38 +86,70 @@ function AppContent() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
 
-  const generateEmoticon = async () => {
-    if (!prompt.trim()) { setError('Please enter a description!'); return }
-    if (!user) { setError('Please sign in to generate emoticons'); setIsAuthModalOpen(true); return }
+  const handleFileSelect = (file: File) => {
+    if (!file.type.match(/^image\/(jpeg|png|webp)$/)) {
+      setError('Please upload a JPG, PNG, or WEBP image.')
+      return
+    }
+    setError('')
+    setResultImage('')
+    setUploadedFile(file)
+    const url = URL.createObjectURL(file)
+    setUploadedImageUrl(url)
+  }
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) handleFileSelect(file)
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+    const file = e.dataTransfer.files?.[0]
+    if (file) handleFileSelect(file)
+  }
+
+  const removeBackground = async () => {
+    if (!uploadedFile) { setError('Please upload an image first.'); return }
+    if (!user) { setError('Please sign in to remove backgrounds'); setIsAuthModalOpen(true); return }
     if (!hasCredits) { setError('You have run out of credits. Please purchase more to continue.'); setIsPricingModalOpen(true); return }
+
     setIsLoading(true)
     setError('')
     setToast(null)
-    setGeneratedImage('')
-    setIsFavorited(false)
-    setLoadingMessage(loadingMessages[Math.floor(Math.random() * loadingMessages.length)])
+
     try {
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve((reader.result as string).split(',')[1])
+        reader.onerror = reject
+        reader.readAsDataURL(uploadedFile)
+      })
+
       const token = session?.access_token
       const controller = new AbortController()
-      const timeout = setTimeout(() => controller.abort(), 60000)
+      const timeout = setTimeout(() => controller.abort(), 90000)
+
       let response: Response
       try {
-        response = await fetch('/api/generate', {
+        response = await fetch('/api/remove-background', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify({ prompt }),
+          body: JSON.stringify({ imageBase64: base64, mimeType: uploadedFile.type }),
           signal: controller.signal,
         })
       } catch (fetchErr: any) {
         clearTimeout(timeout)
         if (fetchErr.name === 'AbortError') {
-          setToast({ title: 'Request Timed Out', message: 'The generation took too long. Please try again. No credits were deducted.', type: 'warning' })
+          setToast({ title: 'Request Timed Out', message: 'The processing took too long. Please try again. No credits were deducted.', type: 'warning' })
         } else {
-          setToast({ title: 'Network Error', message: 'Could not connect to the server. Please check your connection and try again. No credits were deducted.', type: 'error' })
+          setToast({ title: 'Network Error', message: 'Could not connect to the server. Please check your connection and try again.', type: 'error' })
         }
         return
       }
       clearTimeout(timeout)
+
       if (!response.ok) {
         const data = await response.json().catch(() => ({}))
         switch (response.status) {
@@ -154,132 +157,119 @@ function AppContent() {
             setToast({ title: 'Session Expired', message: 'Your session has expired. Please refresh the page and sign in again. No credits were deducted.', type: 'error' })
             break
           case 402:
-            setToast({ title: 'Insufficient Credits', message: "You don't have enough credits. Purchase more to continue generating.", type: 'warning' })
+            setToast({ title: 'Insufficient Credits', message: "You don't have enough credits. Purchase more to continue.", type: 'warning' })
             setIsPricingModalOpen(true)
             break
           case 429:
-            setToast({ title: 'Too Many Requests', message: 'Please wait a moment before generating again. No credits were deducted.', type: 'warning' })
+            setToast({ title: 'Too Many Requests', message: 'Please wait a moment before trying again. No credits were deducted.', type: 'warning' })
             break
           case 503:
-            setToast({ title: 'Service Unavailable', message: 'The emoticon generation service is temporarily unavailable. Please try again in a few minutes. No credits were deducted.', type: 'error' })
+            setToast({ title: 'Service Unavailable', message: 'The background removal service is temporarily unavailable. Please try again in a few minutes. No credits were deducted.', type: 'error' })
             break
           default:
-            setToast({ title: 'Generation Failed', message: (data.error || 'An unexpected error occurred') + '. No credits were deducted.', type: 'error' })
+            setToast({ title: 'Processing Failed', message: (data.error || 'An unexpected error occurred') + '. No credits were deducted.', type: 'error' })
             break
         }
         return
       }
+
       const data = await response.json()
-      setGeneratedImage(data.image)
-      saveToHistory(prompt, data.image)
-      const newCount = imagesGenerated + 1
-      setImagesGenerated(newCount)
-      localStorage.setItem('images-generated', newCount.toString())
+      setResultImage(data.image)
       await refreshProfile()
     } catch (err: any) {
-      setToast({ title: 'Generation Failed', message: (err.message || 'An unexpected error occurred') + '. No credits were deducted.', type: 'error' })
+      setToast({ title: 'Processing Failed', message: err.message || 'An unexpected error occurred.', type: 'error' })
     } finally {
       setIsLoading(false)
     }
   }
 
-  const saveToHistory = (prompt: string, imageUrl: string) => {
+  const downloadResult = async () => {
+    if (!resultImage) return
     try {
-      const history = JSON.parse(localStorage.getItem('emoji-history') || '[]')
-      const timestamp = Date.now()
-      const updated = [{ id: timestamp.toString(), prompt, imageUrl, timestamp }, ...history].slice(0, 20)
-      localStorage.setItem('emoji-history', JSON.stringify(updated))
-    } catch (error) { console.error('Error saving to history:', error) }
-  }
-
-  const regenerate = async () => { if (prompt) await generateEmoticon() }
-
-  const handleAddToFavorites = async () => {
-    if (!generatedImage) return
-    if (!session?.access_token) { setError('Please sign in to add favorites'); return }
-    try {
-      const response = await fetch('/api/favorites', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
-        body: JSON.stringify({ imageUrl: generatedImage, prompt }),
-      })
-      const data = await response.json().catch(() => ({}))
-      if (response.ok) {
-        setIsFavorited(true)
-      } else {
-        console.error('[favorites] Save failed:', response.status, data)
-        setError(data.error || 'Failed to add to favorites')
-      }
-    } catch (err: any) {
-      console.error('[favorites] Network error:', err)
-      setError('Failed to add to favorites')
-    }
-  }
-
-  const downloadImage = async () => {
-    if (!generatedImage) return
-    try {
+      const response = await fetch(resultImage)
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
-      link.href = `/api/download?url=${encodeURIComponent(generatedImage)}`
-      link.download = `emoticon-${Date.now()}.png`
+      link.href = url
+      link.download = `background-removed-${Date.now()}.png`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
-    } catch (err) {
+      URL.revokeObjectURL(url)
+    } catch {
       alert('Failed to download image. Please try right-clicking and "Save Image As..."')
     }
+  }
+
+  const resetAll = () => {
+    setResultImage('')
+    setUploadedFile(null)
+    setUploadedImageUrl('')
+    setError('')
   }
 
   return (
     <div className={`app ${isLoaded ? 'fade-in' : ''}`}>
       <Header />
-      
-      <div className="suggestions-compact-section">
-        <div className="suggestion-row">
-          <h4 className="suggestion-row-title">💡 Quick Ideas</h4>
-          <div className="quick-ideas-grid">
-            {quickIdeas.map((item) => (
-              <button
-                key={item.text}
-                className="suggestion-tag-compact quick-idea-btn"
-                onClick={() => { setPrompt(item.text); setTimeout(() => promptInputRef.current?.focus(), 0) }}
-              >
-                <span className="tag-emoji">{item.emoji}</span><span className="tag-text">{item.text}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-      
+
       <div className="app-container">
         <div className="particles">
-          {[10,20,30,40,50,60,70,80,90].map((left, i) => (
+          {[10, 20, 30, 40, 50, 60, 70, 80, 90].map((left, i) => (
             <div key={i} className="particle" style={{ left: `${left}%`, animationDelay: `${i * 0.5}s` }}></div>
           ))}
         </div>
       </div>
-      
+
       <div className="main-content">
         <div className="prompt-section-wrapper">
-          <h3 className="prompt-section-title"><span className="title-icon">✨</span>Create Your Emoticon</h3>
-          <div className="prompt-input-container">
-            <input
-              ref={promptInputRef}
-              className="prompt-input-enhanced"
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Describe your emoticon (e.g., happy cosmic cat)"
-              onKeyPress={(e) => e.key === 'Enter' && !isLoading && generateEmoticon()}
-              disabled={isLoading}
-            />
-            <button className="generate-btn-enhanced" onClick={generateEmoticon} disabled={isLoading || !prompt.trim()}>
-              {isLoading ? (
-                <><span className="spinner"></span><span className="btn-text">Generating...</span></>
-              ) : (
-                <><span className="btn-icon">🎨</span><span className="btn-text">Generate</span></>
-              )}
-            </button>
+          <h3 className="prompt-section-title"><span className="title-icon">🖼️</span>Upload Your Image</h3>
+
+          <div
+            className={`upload-zone${isDragging ? ' upload-zone-dragging' : ''}${uploadedImageUrl ? ' upload-zone-has-image' : ''}`}
+            onClick={() => !uploadedImageUrl && fileInputRef.current?.click()}
+            onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
+            onDragLeave={() => setIsDragging(false)}
+            onDrop={handleDrop}
+          >
+            {uploadedImageUrl ? (
+              <div className="upload-zone-preview">
+                <img src={uploadedImageUrl} alt="Uploaded" className="upload-preview-img" />
+                <button
+                  className="upload-change-btn"
+                  onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click() }}
+                >
+                  Change Image
+                </button>
+              </div>
+            ) : (
+              <div className="upload-zone-placeholder">
+                <span className="upload-icon">📁</span>
+                <p className="upload-text">Drop your image here or <span className="upload-link">browse</span></p>
+                <p className="upload-hint">Supports JPG, PNG, WEBP</p>
+              </div>
+            )}
           </div>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={handleFileInputChange}
+            style={{ display: 'none' }}
+          />
+
+          <button
+            className="generate-btn-enhanced"
+            onClick={removeBackground}
+            disabled={isLoading || !uploadedFile}
+            style={{ marginTop: '1rem', width: '100%' }}
+          >
+            {isLoading ? (
+              <><span className="spinner"></span><span className="btn-text">Removing Background...</span></>
+            ) : (
+              <><span className="btn-icon">✂️</span><span className="btn-text">Remove Background</span></>
+            )}
+          </button>
         </div>
 
         {error && <div className="error-message"><span className="error-icon">⚠️</span>{error}</div>}
@@ -287,52 +277,50 @@ function AppContent() {
         {isLoading && (
           <div className="loading-section">
             <div className="loading-spinner-large"></div>
-            <p className="loading-message">{loadingMessage}</p>
-            <p className="loading-hint">This usually takes 3-5 seconds</p>
+            <p className="loading-message">Removing background... ✨</p>
+            <p className="loading-hint">This usually takes 3-8 seconds</p>
           </div>
         )}
 
-        {generatedImage && !isLoading && (
+        {resultImage && !isLoading && (
           <div className="result-section slide-up">
-            <h2 className="result-title">Your Emoticon ✨<span className="generation-time">Generated in ~4s</span></h2>
-            <div className="image-container">
-              <img src={generatedImage} alt="Generated emoticon" className="generated-image fade-in-image" loading="lazy" />
+            <h2 className="result-title">Background Removed ✨</h2>
+            <div className="before-after-container">
+              <div className="before-after-card">
+                <p className="before-after-label">Before</p>
+                <img src={uploadedImageUrl} alt="Original" className="generated-image fade-in-image" loading="lazy" />
+              </div>
+              <div className="before-after-divider">→</div>
+              <div className="before-after-card">
+                <p className="before-after-label">After</p>
+                <div className="transparent-bg-checker">
+                  <img src={resultImage} alt="Background removed" className="generated-image fade-in-image" loading="lazy" />
+                </div>
+              </div>
             </div>
             <div className="action-buttons">
-              <button onClick={downloadImage} className="action-btn download-btn"><span>📥</span> Download</button>
-              <button
-                onClick={handleAddToFavorites}
-                className={`action-btn favorite-btn ${isFavorited ? 'favorited' : ''}`}
-                disabled={isFavorited}
-              >
-                <span>{isFavorited ? '✅' : '⭐'}</span> {isFavorited ? 'Added!' : 'Favorite'}
-              </button>
-              <button onClick={regenerate} className="action-btn regenerate-btn"><span>🔄</span> Regenerate</button>
-              <button className="action-btn copy-btn" onClick={() => { navigator.clipboard.writeText(generatedImage); alert('Image URL copied!') }}>
-                <span>🔗</span> Copy URL
-              </button>
+              <button onClick={downloadResult} className="action-btn download-btn"><span>📥</span> Download PNG</button>
+              <button onClick={resetAll} className="action-btn regenerate-btn"><span>🔄</span> New Image</button>
             </div>
-            <button className="platform-guide-button" onClick={() => setIsGuideOpen(true)}>📱 How to Use on Social Platforms</button>
           </div>
         )}
-
       </div>
 
       <section className="ecosystem-section">
         <h2 className="ecosystem-heading">Complete AI Ecosystem</h2>
         <div className="ecosystem-grid">
           {[
-            { name: 'Emoticons', icon: '😃', desc: 'Custom emoji creation',          status: 'Available Now',   isActive: true,  href: 'https://emoticons.deepvortexai.art', isCurrent: true  },
-            { name: 'Image Gen',  icon: '🎨', desc: 'AI artwork',                    status: 'Available Now',   isActive: true,  href: 'https://images.deepvortexai.art',    isCurrent: false },
-            { name: 'Remove Background', icon: '🎨', desc: 'Remove backgrounds instantly', status: 'Coming Soon', isActive: false },
-            { name: 'More Tools', icon: '✨', desc: 'Expanding soon',                status: 'In Development', isActive: false },
+            { name: 'Emoticons',  icon: '😃', desc: 'Custom emoji creation',          status: 'Available Now',  isActive: true,  href: 'https://emoticons.deepvortexai.art', isCurrent: false },
+            { name: 'Image Gen',  icon: '🎨', desc: 'AI artwork',                      status: 'Available Now',  isActive: true,  href: 'https://images.deepvortexai.art',    isCurrent: false },
+            { name: 'Remove BG',  icon: '✂️', desc: 'Remove backgrounds instantly',    status: 'Available Now',  isActive: true,  href: '#',                                  isCurrent: true  },
+            { name: 'More Tools', icon: '✨', desc: 'Expanding soon',                  status: 'In Development', isActive: false },
           ].map((tool, idx) => (
             <div
               key={idx}
               className={`ecosystem-card ${tool.isActive ? 'eco-card-active' : 'eco-card-inactive'}${tool.isCurrent ? ' eco-glow' : ''}`}
-              onClick={() => { if (tool.isActive && tool.href) window.location.href = tool.href; }}
-              role={tool.isActive ? 'button' : 'presentation'}
-              style={{ cursor: tool.isActive ? 'pointer' : 'default' }}
+              onClick={() => { if (tool.isActive && tool.href && !tool.isCurrent) window.location.href = tool.href }}
+              role={tool.isActive && !tool.isCurrent ? 'button' : 'presentation'}
+              style={{ cursor: tool.isActive && !tool.isCurrent ? 'pointer' : 'default' }}
             >
               <div className="eco-icon">{tool.icon}</div>
               <h3 className="eco-title">{tool.name}</h3>
@@ -365,7 +353,7 @@ function AppContent() {
           </a>
           <a href="https://deepvortexai.quora.com/" target="_blank" rel="noopener noreferrer" className="footer-social-link">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-              <path d="M12.071 0C5.4 0 0 5.4 0 12.071c0 6.67 5.4 12.071 12.071 12.071 6.67 0 12.071-5.4 12.071-12.071C24.142 5.4 18.742 0 12.07 0zm2.028 18.383c-.5-.998-.954-1.88-1.907-1.88h-.213l1.193-2.647h-.002c-.362.12-.743.18-1.128.18-2.287 0-3.996-1.837-3.996-4.177s1.709-4.177 3.997-4.177 3.996 1.837 3.996 4.177c0 1.29-.496 2.432-1.32 3.29.277.397.533.812.793 1.227l.15.238c.278.442.55.886.832 1.33l-2.395 2.44zm-2.057-4.997c1.18 0 1.94-1.083 1.94-2.51 0-1.428-.76-2.511-1.94-2.511s-1.94 1.083-1.94 2.51c0 1.428.76 2.511 1.94 2.511z"/>
+              <path d="M12.071 0C5.4 0 0 5.4 0 12.071c0 6.67 5.4 12.071 12.071 12.071 6.67 0 12.071-5.4 12.071-12.071C24.142 5.4 18.742 0 12.07 0zm2.028 18.383c-.5-.998-.954-1.88-1.907-1.88h-.213l1.193-2.647h-.002c-.362.12-.743.18-1.128.18-2.287 0-3.996-1.837-3.996-4.177s1.709-4.177 3.997-4.177 3.996 1.837 3.996 4.177c0 1.29-.496 2.432-1.32 3.29.277.397.533.812.793 1.227l.15.238c.278.442.55.886.832 1.33l-2.395 2.44zm-2.057-4.997c1.18 0 1.94-1.083 1.94-2.51 0-1.428-.76-2.511-1.94-2.511s-1.94 1.083-1.94 2.511c0 1.428.76 2.511 1.94 2.511z"/>
             </svg>
             Quora
           </a>
@@ -373,7 +361,6 @@ function AppContent() {
         </div>
       </footer>
 
-      <PlatformGuideModal isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
       <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
       <PricingModal isOpen={isPricingModalOpen} onClose={() => setIsPricingModalOpen(false)} />
       {showNotification && (
@@ -388,7 +375,6 @@ function AppContent() {
 
 function App() {
   const path = window.location.pathname
-  // ✅ Détecter /auth/callback avant de rendre l'app normale
   if (path === '/auth/callback') {
     return (
       <AuthProvider>
