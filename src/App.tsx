@@ -133,7 +133,7 @@ function AppContent() {
 
       const token = session?.access_token
       const controller = new AbortController()
-      const timeout = setTimeout(() => controller.abort(), 90000)
+      const timeout = setTimeout(() => controller.abort(), 55000)
 
       let response: Response
       try {

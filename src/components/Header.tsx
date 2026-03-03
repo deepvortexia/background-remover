@@ -2,14 +2,12 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { AuthModal } from './AuthModal'
 import { PricingModal } from './PricingModal'
-import { Gallery } from './Gallery'
 import './Header.css'
 
 export default function Header() {
   const { user, profile, signOut, loading, refreshProfile } = useAuth()
   const [showAuthModal, setShowAuthModal] = useState(false)
-  const [showGallery, setShowGallery] = useState(false)
-  const [showPricingModal, setShowPricingModal] = useState(false)
+const [showPricingModal, setShowPricingModal] = useState(false)
   const [loadingTimeout, setLoadingTimeout] = useState(false)
   const [showRetry, setShowRetry] = useState(false)
   const [isEmbedded, setIsEmbedded] = useState(false)
@@ -111,16 +109,7 @@ export default function Header() {
             <span className="pill-text">Buy Credits</span>
           </button>
 
-          <button
-            className="hub-pill favorites-pill"
-            onClick={() => setShowGallery(true)}
-            title="View your favorite emoticons"
-          >
-            <span className="pill-icon">⭐</span>
-            <span className="pill-text">Favorites</span>
-          </button>
-
-          {user ? (
+{user ? (
             <div className="hub-pill profile-pill">
               {getAvatarUrl() ? (
                 <div className="profile-avatar">
@@ -160,8 +149,7 @@ export default function Header() {
       </header>
 
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
-      <Gallery isOpen={showGallery} onClose={() => setShowGallery(false)} />
-      <PricingModal isOpen={showPricingModal} onClose={() => setShowPricingModal(false)} />
+<PricingModal isOpen={showPricingModal} onClose={() => setShowPricingModal(false)} />
     </>
   )
 }
