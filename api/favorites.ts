@@ -44,7 +44,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       .order('created_at', { ascending: false })
 
     if (error) {
-      console.error('[favorites] Fetch error:', error.message)
+      console.error('[favorites] Fetch error:', JSON.stringify(error))
       return res.status(500).json({ error: 'Failed to fetch favorites' })
     }
 
@@ -65,7 +65,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       .single()
 
     if (error) {
-      console.error('[favorites] Insert error:', error.message)
+      console.error('[favorites] Insert error:', JSON.stringify(error))
       return res.status(500).json({ error: 'Failed to save favorite' })
     }
 
@@ -86,7 +86,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       .eq('user_id', user.id)
 
     if (error) {
-      console.error('[favorites] Delete error:', error.message)
+      console.error('[favorites] Delete error:', JSON.stringify(error))
       return res.status(500).json({ error: 'Failed to delete favorite' })
     }
 
