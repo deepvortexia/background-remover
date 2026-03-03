@@ -25,6 +25,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const apiKey = process.env.REPLICATE_API_TOKEN
+  console.log('[remove-background] API key check:', apiKey ? `loaded (${apiKey.slice(0, 8)}...)` : 'MISSING')
   if (!apiKey) {
     return res.status(500).json({ error: 'Replicate API key not configured' })
   }
