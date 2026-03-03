@@ -81,7 +81,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   let generationFailed = false
 
   try {
-    const imageDataUrl = `data:${mimeType || 'image/jpeg'};base64,${imageBase64}`
+    const imageBuffer = Buffer.from(imageBase64, 'base64')
+    const imageMimeType = mimeType || 'image/jpeg'
+
+    const fileUploadResponse = await fetch('https://api.replicate.com/v1/files', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${apiKey}`,
+        'Content-Type': imageMimeType,
+        'Content-Disposition': 'attachment; filename="image.png"',
+      },
+      body: imageBuffer,
+    })
+
+    if (!fileUploadResponse.ok) {
+      const uploadError = await fileUploadResponse.json().catch(() => ({}))
+      throw new Error((uploadError as any).detail || 'Failed to upload image to Replicate')
+    }
+
+    const fileData = await fileUploadResponse.json()
+    const imageUrl_replicate = fileData.urls?.get
+
+    if (!imageUrl_replicate) {
+      throw new Error('No file URL returned from Replicate file upload')
+    }
+
+    console.log('[remove-background] Uploaded image to Replicate files:', imageUrl_replicate)
 
     const response = await fetch('https://api.replicate.com/v1/models/851-labs/background-remover/predictions', {
       method: 'POST',
@@ -92,7 +117,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       },
       body: JSON.stringify({
         input: {
-          image: imageDataUrl,
+          image: imageUrl_replicate,
         },
       }),
     })
