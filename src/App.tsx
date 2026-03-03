@@ -8,6 +8,7 @@ import { PricingModal } from './components/PricingModal'
 import { Notification } from './components/Notification'
 import { useCredits } from './hooks/useCredits'
 import { AuthCallback } from './pages/AuthCallback'
+import { Gallery } from './components/Gallery'
 
 const CREDIT_REFRESH_ERROR = 'Payment successful, but there was a temporary issue syncing your credits. Please refresh the page to see your updated balance.'
 const PENDING_STRIPE_SESSION_KEY = 'pending_stripe_session'
@@ -361,6 +362,7 @@ function AppContent() {
         </div>
       </footer>
 
+      <Gallery pendingImage={resultImage} />
       <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
       <PricingModal isOpen={isPricingModalOpen} onClose={() => setIsPricingModalOpen(false)} />
       {showNotification && (

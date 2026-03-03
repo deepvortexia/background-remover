@@ -284,6 +284,105 @@
   transform: scale(0.95) translateZ(0);
 }
 
+/* Pending image save section */
+.gallery-pending {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  background: var(--bg-tertiary);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 12px;
+}
+
+.gallery-pending-preview {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.gallery-pending-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery-save-btn {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold-primary));
+  border: none;
+  border-radius: 8px;
+  color: #0a0a0a;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.gallery-save-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.gallery-save-btn:not(:disabled):hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Delete button — top-left corner of gallery item */
+.gallery-delete-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 36px;
+  height: 36px;
+  background: rgba(180, 40, 40, 0.85);
+  border: none;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.8) translateZ(0);
+}
+
+.gallery-item:hover .gallery-delete-btn {
+  opacity: 1;
+  transform: scale(1) translateZ(0);
+}
+
+.gallery-delete-btn:hover {
+  background: #cc2222;
+  transform: scale(1.05) translateZ(0) !important;
+}
+
+/* Transparent checker wrapper inside gallery items */
+.gallery-item-img-wrap {
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+}
+
+.gallery-item-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .gallery-delete-btn {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .clear-history-btn {
   width: 100%;
   padding: 12px 24px;
