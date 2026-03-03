@@ -83,7 +83,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const imageDataUrl = `data:${mimeType || 'image/jpeg'};base64,${imageBase64}`
 
-    const response = await fetch('https://api.replicate.com/v1/models/lucataco/remove-bg/predictions', {
+    const response = await fetch('https://api.replicate.com/v1/models/851-labs/background-remover/predictions', {
       method: 'POST',
       headers: {
         'Authorization': `Token ${apiKey}`,

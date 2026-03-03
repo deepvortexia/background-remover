@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 
+const getReturnOrigin = (): string => {
+    const match = document.cookie.match(/(^| )deepvortex-return-origin=([^;]+)/)
+    const origin = match ? decodeURIComponent(match[2]) : null
+    // Clear the cookie
+    document.cookie = 'deepvortex-return-origin=; domain=.deepvortexai.art; path=/; max-age=0'
+    return origin || window.location.origin
+}
+
 export function AuthCallback() {
     const [error, setError] = useState<string | null>(null)
     const [debugInfo, setDebugInfo] = useState<string>('')
@@ -33,7 +41,7 @@ export function AuthCallback() {
                         const { data: sessionData } = await supabase.auth.getSession()
                         if (sessionData?.session) {
                             console.log('[Emoticon AuthCallback] Session already established via detectSessionInUrl')
-                            window.location.href = '/'
+                            window.location.href = getReturnOrigin()
                             return
                         }
                         setError('Session expired. Please try signing in again.')
@@ -46,7 +54,7 @@ export function AuthCallback() {
                 }
 
                 console.log('[Emoticon AuthCallback] Session established:', data.session ? 'success' : 'no session')
-                window.location.href = '/'
+                window.location.href = getReturnOrigin()
                 return
             }
 
@@ -55,7 +63,7 @@ export function AuthCallback() {
             if (hash && hash.includes('access_token')) {
                 console.log('[Emoticon AuthCallback] Found access_token in hash, getting session...')
                 await supabase.auth.getSession()
-                window.location.href = '/'
+                window.location.href = getReturnOrigin()
                 return
             }
 
@@ -66,7 +74,7 @@ export function AuthCallback() {
                     console.log('[Emoticon AuthCallback] Auth state change:', event)
                     if (event === 'SIGNED_IN' && session) {
                         subscription.unsubscribe()
-                        window.location.href = '/'
+                        window.location.href = getReturnOrigin()
                     }
                 }
             )
@@ -75,7 +83,7 @@ export function AuthCallback() {
             setTimeout(() => {
                 subscription.unsubscribe()
                 console.log('[Emoticon AuthCallback] Timeout reached, redirecting to home')
-                window.location.href = '/'
+                window.location.href = getReturnOrigin()
             }, 5000)
         }
 
@@ -105,7 +113,7 @@ export function AuthCallback() {
                     Return to Home
                 </a>
                 <button 
-                    onClick={() => window.location.href = '/'}
+                    onClick={() => window.location.href = getReturnOrigin()}
                     style={{
                         marginTop: '0.5rem',
                         padding: '0.75rem 1.5rem',

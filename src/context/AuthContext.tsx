@@ -151,7 +151,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [loadProfile])
 
+    const saveReturnOrigin = () => {
+        // Store current origin in a cross-subdomain cookie so AuthCallback can
+        // redirect back here even if Supabase sends the callback to a different subdomain.
+        document.cookie = `deepvortex-return-origin=${encodeURIComponent(window.location.origin)}; domain=.deepvortexai.art; path=/; max-age=300; secure; samesite=lax`
+    }
+
     const signInWithGoogle = async () => {
+        saveReturnOrigin()
         await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
@@ -162,6 +169,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const signInWithEmail = async (email: string) => {
+        saveReturnOrigin()
         return await supabase.auth.signInWithOtp({
             email,
             options: {
