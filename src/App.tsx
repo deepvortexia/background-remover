@@ -29,6 +29,9 @@ function AppContent() {
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
   const [showNotification, setShowNotification] = useState(false)
   const [toast, setToast] = useState<{ title: string; message: string; type: 'success' | 'error' | 'warning' } | null>(null)
+  const [favRefreshKey, setFavRefreshKey] = useState(0)
+  const [favSaving, setFavSaving] = useState(false)
+  const [favSaved, setFavSaved] = useState(false)
 
   const { user, session, loading } = useAuth()
   const { hasCredits, refreshProfile } = useCredits()
@@ -184,6 +187,29 @@ function AppContent() {
     }
   }
 
+  // Reset saved badge when a new result arrives
+  useEffect(() => { setFavSaved(false) }, [resultImage])
+
+  const saveFavorite = async () => {
+    if (!resultImage || favSaving || favSaved) return
+    if (!session) { setIsAuthModalOpen(true); return }
+    setFavSaving(true)
+    try {
+      const res = await fetch('/api/favorites', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({ result_url: resultImage, original_url: uploadedImageUrl || null }),
+      })
+      if (res.ok) {
+        setFavSaved(true)
+        setFavRefreshKey(k => k + 1)
+      }
+    } catch {}
+    finally {
+      setFavSaving(false)
+    }
+  }
+
   const downloadResult = async () => {
     if (!resultImage) return
     try {
@@ -301,11 +327,16 @@ function AppContent() {
             </div>
             <div className="action-buttons">
               <button onClick={downloadResult} className="action-btn download-btn"><span>📥</span> Download PNG</button>
+              <button onClick={saveFavorite} className="action-btn save-btn" disabled={favSaving || favSaved}>
+                <span>❤️</span> {favSaved ? 'Saved!' : favSaving ? 'Saving...' : 'Save'}
+              </button>
               <button onClick={resetAll} className="action-btn regenerate-btn"><span>🔄</span> New Image</button>
             </div>
           </div>
         )}
       </div>
+
+      <Gallery refreshKey={favRefreshKey} />
 
       <section className="ecosystem-section">
         <h2 className="ecosystem-heading">Complete AI Ecosystem</h2>
@@ -362,7 +393,6 @@ function AppContent() {
         </div>
       </footer>
 
-      <Gallery pendingImage={resultImage} />
       <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
       <PricingModal isOpen={isPricingModalOpen} onClose={() => setIsPricingModalOpen(false)} />
       {showNotification && (

@@ -1,16 +1,17 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { createClient } from '@supabase/supabase-js'
 
-// SQL to create the favorites table (run once in Supabase SQL editor):
+// SQL to create the bg_favorites table (run once in Supabase SQL editor):
 //
-// CREATE TABLE favorites (
+// CREATE TABLE bg_favorites (
 //   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
 //   user_id uuid REFERENCES profiles(id) ON DELETE CASCADE,
-//   image_url text NOT NULL,
+//   result_url text NOT NULL,
+//   original_url text,
 //   created_at timestamptz DEFAULT now()
 // );
-// ALTER TABLE favorites ENABLE ROW LEVEL SECURITY;
-// CREATE POLICY "own favorites" ON favorites FOR ALL USING (auth.uid() = user_id);
+// ALTER TABLE bg_favorites ENABLE ROW LEVEL SECURITY;
+// CREATE POLICY "own" ON bg_favorites FOR ALL USING (auth.uid() = user_id);
 
 const supabaseUrl = process.env.SUPABASE_URL || ''
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || ''
@@ -37,8 +38,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === 'GET') {
     const { data, error } = await supabase
-      .from('favorites')
-      .select('id, image_url, created_at')
+      .from('bg_favorites')
+      .select('id, result_url, original_url, created_at')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
 
@@ -51,15 +52,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (req.method === 'POST') {
-    const { imageUrl } = req.body
+    const { result_url, original_url } = req.body
 
-    if (!imageUrl) {
-      return res.status(400).json({ error: 'imageUrl is required' })
+    if (!result_url) {
+      return res.status(400).json({ error: 'result_url is required' })
     }
 
     const { data, error } = await supabase
-      .from('favorites')
-      .insert({ user_id: user.id, image_url: imageUrl })
+      .from('bg_favorites')
+      .insert({ user_id: user.id, result_url, original_url: original_url || null })
       .select('id')
       .single()
 
@@ -79,7 +80,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const { error } = await supabase
-      .from('favorites')
+      .from('bg_favorites')
       .delete()
       .eq('id', id)
       .eq('user_id', user.id)

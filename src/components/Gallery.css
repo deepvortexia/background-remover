@@ -1,3 +1,23 @@
+/* Inline favorites section */
+.favorites-section {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.favorites-heading {
+  font-size: 1.4rem;
+  color: var(--text-primary);
+  margin: 0 0 1.5rem 0;
+  font-weight: 700;
+}
+
+.favorites-loading {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  padding: 1rem 0;
+}
+
 .gallery-toggle {
   position: fixed;
   top: 20px;
