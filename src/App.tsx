@@ -203,6 +203,7 @@ function AppContent() {
       if (res.ok) {
         setFavSaved(true)
         setFavRefreshKey(k => k + 1)
+        setToast({ title: 'Added to Favorites!', message: 'Your image has been saved. View it in ⭐ Favorites.', type: 'success' })
       }
     } catch {}
     finally {
@@ -328,7 +329,7 @@ function AppContent() {
             <div className="action-buttons">
               <button onClick={downloadResult} className="action-btn download-btn"><span>📥</span> Download PNG</button>
               <button onClick={saveFavorite} className="action-btn save-btn" disabled={favSaving || favSaved}>
-                <span>❤️</span> {favSaved ? 'Saved!' : favSaving ? 'Saving...' : 'Save'}
+                <span>⭐</span> {favSaved ? 'Added!' : favSaving ? 'Saving...' : 'Add to Favorites'}
               </button>
               <button onClick={resetAll} className="action-btn regenerate-btn"><span>🔄</span> New Image</button>
             </div>
