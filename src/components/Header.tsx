@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { AuthModal } from './AuthModal'
+import { FavoritesModal } from './FavoritesModal'
 import { PricingModal } from './PricingModal'
 import './Header.css'
 
 export default function Header() {
   const { user, profile, signOut, loading, refreshProfile } = useAuth()
   const [showAuthModal, setShowAuthModal] = useState(false)
-const [showPricingModal, setShowPricingModal] = useState(false)
+  const [showFavoritesModal, setShowFavoritesModal] = useState(false)
+  const [showPricingModal, setShowPricingModal] = useState(false)
   const [loadingTimeout, setLoadingTimeout] = useState(false)
   const [showRetry, setShowRetry] = useState(false)
   const [isEmbedded, setIsEmbedded] = useState(false)
@@ -109,7 +111,16 @@ const [showPricingModal, setShowPricingModal] = useState(false)
             <span className="pill-text">Buy Credits</span>
           </button>
 
-{user ? (
+          <button
+            className="hub-pill favorites-pill"
+            onClick={() => setShowFavoritesModal(true)}
+            title="View your saved favorites"
+          >
+            <span className="pill-icon">⭐</span>
+            <span className="pill-text">Favorites</span>
+          </button>
+
+          {user ? (
             <div className="hub-pill profile-pill">
               {getAvatarUrl() ? (
                 <div className="profile-avatar">
@@ -149,7 +160,8 @@ const [showPricingModal, setShowPricingModal] = useState(false)
       </header>
 
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
-<PricingModal isOpen={showPricingModal} onClose={() => setShowPricingModal(false)} />
+      <FavoritesModal isOpen={showFavoritesModal} onClose={() => setShowFavoritesModal(false)} />
+      <PricingModal isOpen={showPricingModal} onClose={() => setShowPricingModal(false)} />
     </>
   )
 }
