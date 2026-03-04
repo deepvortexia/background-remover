@@ -195,15 +195,20 @@ function AppContent() {
     if (!session) { setIsAuthModalOpen(true); return }
     setFavSaving(true)
     try {
+      console.log('[saveFavorite] Posting to /api/favorites, token prefix:', session.access_token?.slice(0, 20))
       const res = await fetch('/api/favorites', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
         body: JSON.stringify({ result_url: resultImage, original_url: uploadedImageUrl || null }),
       })
+      const body = await res.json().catch(() => ({}))
+      console.log('[saveFavorite] Response status:', res.status, '| body:', JSON.stringify(body))
       if (res.ok) {
         setFavSaved(true)
         setFavRefreshKey(k => k + 1)
         setToast({ title: 'Added to Favorites!', message: 'Your image has been saved. View it in ⭐ Favorites.', type: 'success' })
+      } else {
+        setToast({ title: 'Could not save', message: body.error || 'Failed to save favorite.', type: 'error' })
       }
     } catch {}
     finally {

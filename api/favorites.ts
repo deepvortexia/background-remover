@@ -23,17 +23,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const authHeader = req.headers.authorization
+  console.log('[favorites] Method:', req.method, '| Auth header present:', !!authHeader)
   if (!authHeader) {
     return res.status(401).json({ error: 'Authentication required' })
   }
 
   const token = authHeader.replace('Bearer ', '')
+  console.log('[favorites] Token prefix:', token.slice(0, 20) + '...')
   const { data: { user }, error: authError } = await createClient(supabaseUrl, supabaseAnonKey).auth.getUser(token)
 
   if (authError || !user) {
+    console.error('[favorites] Auth failed:', JSON.stringify(authError))
     return res.status(401).json({ error: 'Invalid authentication token' })
   }
 
+  console.log('[favorites] Authenticated user_id:', user.id)
   const supabase = createClient(supabaseUrl, supabaseServiceKey || supabaseAnonKey)
 
   if (req.method === 'GET') {
@@ -53,11 +57,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === 'POST') {
     const { result_url, original_url } = req.body
+    console.log('[favorites] POST body:', { result_url: result_url?.slice(0, 60) + '...', original_url: !!original_url })
 
     if (!result_url) {
       return res.status(400).json({ error: 'result_url is required' })
     }
 
+    console.log('[favorites] Inserting into bg_favorites for user:', user.id)
     const { data, error } = await supabase
       .from('bg_favorites')
       .insert({ user_id: user.id, result_url, original_url: original_url || null })
@@ -69,6 +75,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: 'Failed to save favorite' })
     }
 
+    console.log('[favorites] Insert success, id:', data.id)
     return res.status(200).json({ success: true, id: data.id })
   }
 
