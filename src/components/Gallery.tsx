@@ -20,6 +20,7 @@ export function Gallery({ refreshKey }: GalleryProps) {
   const [favorites, setFavorites] = useState<FavoriteItem[]>([])
   const [loading, setLoading] = useState(false)
   const [brokenImages, setBrokenImages] = useState<Set<string>>(new Set())
+  const [isOpen, setIsOpen] = useState(false)
 
   const loadFavorites = useCallback(async () => {
     if (!token) return
@@ -87,55 +88,68 @@ export function Gallery({ refreshKey }: GalleryProps) {
     }
   }
 
-  if (!token || (favorites.length === 0 && !loading)) return null
+  if (!token) return null
 
   return (
-    <section className="favorites-section">
-      <h2 className="favorites-heading">❤️ Saved Favorites</h2>
-
-      {loading ? (
-        <p className="favorites-loading">Loading...</p>
-      ) : (
-        <div className="gallery-grid">
-          {favorites.map((item) => (
-            <div key={item.id} className="gallery-item">
-              {brokenImages.has(item.id) ? (
-                <div className="image-placeholder-broken">
-                  <span className="placeholder-icon">😕</span>
-                  <p className="placeholder-text">Image unavailable</p>
+    <div className="favorites-wrapper">
+      <div className="favorites-btn-row">
+        <button
+          className={`gallery-toggle${isOpen ? ' gallery-toggle-active' : ''}`}
+          onClick={() => setIsOpen(o => !o)}
+        >
+          ⭐ Favorites{favorites.length > 0 ? ` (${favorites.length})` : ''}
+        </button>
+      </div>
+      {isOpen && (
+        <section className="favorites-section">
+          <h2 className="favorites-heading">⭐ Saved Favorites</h2>
+          {loading ? (
+            <p className="favorites-loading">Loading...</p>
+          ) : favorites.length === 0 ? (
+            <p className="favorites-loading">No favorites saved yet.</p>
+          ) : (
+            <div className="gallery-grid">
+              {favorites.map((item) => (
+                <div key={item.id} className="gallery-item">
+                  {brokenImages.has(item.id) ? (
+                    <div className="image-placeholder-broken">
+                      <span className="placeholder-icon">😕</span>
+                      <p className="placeholder-text">Image unavailable</p>
+                    </div>
+                  ) : (
+                    <div className="transparent-bg-checker gallery-item-img-wrap">
+                      <img
+                        src={item.resultUrl}
+                        alt="Saved result"
+                        loading="lazy"
+                        decoding="async"
+                        onError={() => setBrokenImages(prev => new Set(prev).add(item.id))}
+                        onLoad={() => setBrokenImages(prev => { const s = new Set(prev); s.delete(item.id); return s })}
+                      />
+                    </div>
+                  )}
+                  <div className="gallery-item-info">
+                    <p className="gallery-date">{new Date(item.createdAt).toLocaleDateString()}</p>
+                  </div>
+                  <button
+                    className="gallery-download-btn"
+                    onClick={(e) => { e.stopPropagation(); handleDownload(item.resultUrl, item.id) }}
+                    disabled={brokenImages.has(item.id)}
+                    title="Download"
+                    aria-label="Download image"
+                  >💾</button>
+                  <button
+                    className="gallery-delete-btn"
+                    onClick={(e) => { e.stopPropagation(); handleDelete(item.id) }}
+                    title="Remove from favorites"
+                    aria-label="Remove from favorites"
+                  >🗑️</button>
                 </div>
-              ) : (
-                <div className="transparent-bg-checker gallery-item-img-wrap">
-                  <img
-                    src={item.resultUrl}
-                    alt="Saved result"
-                    loading="lazy"
-                    decoding="async"
-                    onError={() => setBrokenImages(prev => new Set(prev).add(item.id))}
-                    onLoad={() => setBrokenImages(prev => { const s = new Set(prev); s.delete(item.id); return s })}
-                  />
-                </div>
-              )}
-              <div className="gallery-item-info">
-                <p className="gallery-date">{new Date(item.createdAt).toLocaleDateString()}</p>
-              </div>
-              <button
-                className="gallery-download-btn"
-                onClick={(e) => { e.stopPropagation(); handleDownload(item.resultUrl, item.id) }}
-                disabled={brokenImages.has(item.id)}
-                title="Download"
-                aria-label="Download image"
-              >💾</button>
-              <button
-                className="gallery-delete-btn"
-                onClick={(e) => { e.stopPropagation(); handleDelete(item.id) }}
-                title="Remove from favorites"
-                aria-label="Remove from favorites"
-              >🗑️</button>
+              ))}
             </div>
-          ))}
-        </div>
+          )}
+        </section>
       )}
-    </section>
+    </div>
   )
 }
