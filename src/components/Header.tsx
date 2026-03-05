@@ -74,6 +74,14 @@ export default function Header() {
             ← Back to Hub
           </a>
         )}
+        {!isEmbedded && (
+          <a
+            href="https://3d.deepvortexai.art"
+            className="back-to-hub-link"
+          >
+            🧊 3D Generator
+          </a>
+        )}
 
         <div className="logo-display-zone">
           <div className="orbit-ring-one" />
