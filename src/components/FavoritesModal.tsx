@@ -71,7 +71,7 @@ export function FavoritesModal({ isOpen, onClose }: FavoritesModalProps) {
       document.body.removeChild(link)
       URL.revokeObjectURL(url)
     } catch {
-      window.open(resultUrl, '_blank')
+      alert('Download failed. Please try right-clicking and "Save Image As..."')
     }
   }
 
