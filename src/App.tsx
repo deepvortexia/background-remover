@@ -218,9 +218,21 @@ function AppContent() {
 
   const downloadResult = async () => {
     if (!resultImage) return
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
     try {
       const response = await fetch(resultImage)
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
       const blob = await response.blob()
+      if (isMobile) {
+        const filename = `background-removed-${Date.now()}.png`
+        const file = new File([blob], filename, { type: blob.type })
+        if (navigator.canShare?.({ files: [file] })) {
+          await navigator.share({ files: [file] })
+          return
+        }
+        window.open(resultImage, '_blank')
+        return
+      }
       const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url

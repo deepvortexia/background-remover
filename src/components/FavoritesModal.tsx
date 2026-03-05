@@ -58,10 +58,21 @@ export function FavoritesModal({ isOpen, onClose }: FavoritesModalProps) {
   }
 
   const handleDownload = async (resultUrl: string, id: string) => {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
     try {
       const res = await fetch(resultUrl, { mode: 'cors' })
       if (!res.ok) throw new Error()
       const blob = await res.blob()
+      if (isMobile) {
+        const filename = `bg-removed-${id.slice(0, 8)}.png`
+        const file = new File([blob], filename, { type: blob.type })
+        if (navigator.canShare?.({ files: [file] })) {
+          await navigator.share({ files: [file] })
+          return
+        }
+        window.open(resultUrl, '_blank')
+        return
+      }
       const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
