@@ -218,32 +218,13 @@ function AppContent() {
 
   const downloadResult = async () => {
     if (!resultImage) return
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
-    try {
-      const response = await fetch(resultImage)
-      if (!response.ok) throw new Error(`HTTP ${response.status}`)
-      const blob = await response.blob()
-      if (isMobile) {
-        const filename = `background-removed-${Date.now()}.png`
-        const file = new File([blob], filename, { type: blob.type })
-        if (navigator.canShare?.({ files: [file] })) {
-          await navigator.share({ files: [file] })
-          return
-        }
-        window.open(resultImage, '_blank')
-        return
-      }
-      const url = URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = `background-removed-${Date.now()}.png`
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(url)
-    } catch {
-      alert('Failed to download image. Please try right-clicking and "Save Image As..."')
-    }
+    const r = await fetch(resultImage)
+    const blob = await r.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url; a.download = 'background-removed.png'
+    document.body.appendChild(a); a.click()
+    document.body.removeChild(a); URL.revokeObjectURL(url)
   }
 
   const resetAll = () => {
