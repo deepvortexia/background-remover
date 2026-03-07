@@ -144,30 +144,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // Upload to Supabase Storage for a permanent URL
-    let imageUrl: string = outputUrl
-    try {
-      const imgRes = await fetch(outputUrl)
-      if (imgRes.ok) {
-        const imgBuffer = await imgRes.arrayBuffer()
-        const fileName = `${userId}/${Date.now()}-bg-removed.png`
-        const { error: uploadError } = await supabase.storage
-          .from('generated-images')
-          .upload(fileName, imgBuffer, { contentType: 'image/png', upsert: false })
-        if (!uploadError) {
-          const { data: { publicUrl } } = supabase.storage
-            .from('generated-images')
-            .getPublicUrl(fileName)
-          if (publicUrl) {
-            imageUrl = publicUrl
-            console.log('[remove-background] Uploaded to Supabase Storage:', imageUrl)
-          }
-        } else {
-          console.error('[remove-background] Storage upload failed, using Replicate URL:', uploadError)
-        }
-      }
-    } catch (storageErr) {
-      console.error('[remove-background] Storage error, using Replicate URL:', storageErr)
-    }
+    const imgRes = await fetch(outputUrl)
+    if (!imgRes.ok) throw new Error(`Failed to fetch Replicate output: ${imgRes.status}`)
+    const imgBuffer = await imgRes.arrayBuffer()
+    const fileName = `${userId}/${Date.now()}-bg-removed.png`
+    const { error: uploadError } = await supabase.storage
+      .from('generated-images')
+      .upload(fileName, imgBuffer, { contentType: 'image/png', upsert: false })
+    if (uploadError) throw new Error(`Storage upload failed: ${uploadError.message}`)
+    const { data: { publicUrl } } = supabase.storage
+      .from('generated-images')
+      .getPublicUrl(fileName)
+    if (!publicUrl) throw new Error('Failed to get public URL after upload')
+    const imageUrl: string = publicUrl
+    console.log('[remove-background] Uploaded to Supabase Storage:', imageUrl)
 
     // Log transaction (non-blocking, fire-and-forget)
     void supabase
