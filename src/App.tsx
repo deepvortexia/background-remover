@@ -231,9 +231,35 @@ function AppContent() {
     }
   }
 
-  const downloadResult = () => {
+  const downloadResult = async () => {
     if (!resultImage) return
-    window.location.href = `/api/download?url=${encodeURIComponent(resultImage)}&filename=background-removed.png`
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+    const filename = `bg-removed-${Date.now()}.png`
+    try {
+      const response = await fetch(resultImage)
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      const blob = await response.blob()
+      if (isMobile) {
+        const file = new File([blob], filename, { type: 'image/png' })
+        if (navigator.canShare?.({ files: [file] })) {
+          await navigator.share({ files: [file] })
+          return
+        }
+        window.open(resultImage, '_blank')
+        return
+      }
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error('Download error:', err)
+      alert('Failed to download image. Please try right-clicking and "Save Image As..."')
+    }
   }
 
   const resetAll = () => {
