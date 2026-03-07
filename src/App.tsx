@@ -17,6 +17,25 @@ const cleanUrlParams = () => {
   window.history.replaceState({}, '', window.location.pathname)
 }
 
+const compressImage = (file: File): Promise<string> => {
+  return new Promise((resolve) => {
+    const canvas = document.createElement('canvas')
+    const img = new Image()
+    img.onload = () => {
+      const max = 1200
+      let w = img.width, h = img.height
+      if (w > max || h > max) {
+        if (w > h) { h = h * max / w; w = max }
+        else { w = w * max / h; h = max }
+      }
+      canvas.width = w; canvas.height = h
+      canvas.getContext('2d')!.drawImage(img, 0, 0, w, h)
+      resolve(canvas.toDataURL('image/jpeg', 0.75))
+    }
+    img.src = URL.createObjectURL(file)
+  })
+}
+
 function AppContent() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   const [uploadedImageUrl, setUploadedImageUrl] = useState('')
@@ -124,12 +143,8 @@ function AppContent() {
     setToast(null)
 
     try {
-      const base64 = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader()
-        reader.onload = () => resolve((reader.result as string).split(',')[1])
-        reader.onerror = reject
-        reader.readAsDataURL(uploadedFile)
-      })
+      const dataUrl = await compressImage(uploadedFile)
+      const base64 = dataUrl.split(',')[1]
 
       const token = session?.access_token
       const controller = new AbortController()
@@ -140,7 +155,7 @@ function AppContent() {
         response = await fetch('/api/remove-background', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify({ imageBase64: base64, mimeType: uploadedFile.type }),
+          body: JSON.stringify({ imageBase64: base64, mimeType: 'image/jpeg' }),
           signal: controller.signal,
         })
       } catch (fetchErr: any) {
