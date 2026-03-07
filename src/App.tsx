@@ -231,18 +231,9 @@ function AppContent() {
     }
   }
 
-  const downloadResult = async () => {
+  const downloadResult = () => {
     if (!resultImage) return
-    const r = await fetch(resultImage)
-    const blob = await r.blob()
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'background-removed.png'
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
+    window.open(resultImage + '?download=1', '_blank')
   }
 
   const resetAll = () => {
