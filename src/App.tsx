@@ -233,7 +233,7 @@ function AppContent() {
 
   const downloadResult = () => {
     if (!resultImage) return
-    window.open(resultImage + '?download=1', '_blank')
+    window.location.href = `/api/download?url=${encodeURIComponent(resultImage)}&filename=background-removed.png`
   }
 
   const resetAll = () => {
