@@ -86,7 +86,7 @@ export default function Header() {
           />
         </div>
 
-        <h1 className="brand-title-text">DΞΞP VORTΞX AI</h1>
+        <h1 className="brand-title-text">AI Background Remover</h1>
         <p className="primary-tagline">✂️ Remove backgrounds from images instantly</p>
 
         <div className="hub-pills-container">
