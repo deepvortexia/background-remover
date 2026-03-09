@@ -1,73 +1,102 @@
-# Deep Vortex AI Emoticon Generator
+# Deep Vortex AI Background Remover
 
-> Create stunning custom AI emoticons and emoji from simple text descriptions in seconds. Type what you want, get a unique high-quality emoticon instantly.
+> Remove image backgrounds with AI precision — get clean, transparent PNGs in seconds.
 
 ## URL
 
-https://emoticons.deepvortexai.art/
+https://bgremover.deepvortexai.art
 
 ## About
 
-The Deep Vortex AI Emoticon Generator uses advanced AI to transform text prompts into high-quality custom emoticons and emoji. No design skills needed — just describe your emoticon and the AI creates it.
+The Deep Vortex AI Background Remover uses advanced AI to detect and remove backgrounds from any image with high accuracy and clean edge detection. Upload a photo of a product, a portrait, an object, or any subject, and receive a transparent PNG with the background cleanly removed — ready to place on any backdrop, website, or design.
 
-Part of the Deep Vortex AI ecosystem: https://deepvortexai.art
+The tool supports JPG, PNG, and WEBP input formats and processes images instantly. A before/after preview lets you inspect the result before downloading. Whether you are an e-commerce seller who needs clean product photos, a photographer who removes backgrounds for composites, or a designer creating layered graphics, the AI Background Remover delivers professional-quality results without the need for Photoshop or manual masking.
+
+Credits are shared with your Deep Vortex AI account and work across all tools in the ecosystem. New accounts get 2 free credits to try it immediately.
 
 ## Features
 
-- Text-to-emoticon generation using AI
-- High-quality PNG output
-- Instant results (typically 3-5 seconds)
-- One-click download
-- Favorites gallery (save your best creations to the cloud)
-- Local history (recent generations saved automatically)
-- Platform guide for using emoticons on social media
+- AI-powered background removal with precise edge detection
+- Transparent PNG output — universally compatible with all design tools and platforms
+- Before/after preview to inspect results before downloading
+- Supports JPG, PNG, and WEBP input formats
+- Instant processing — results delivered in seconds
+- One-click download of the processed transparent image
+- Batch-ready workflow for processing multiple images efficiently
+- Clean handling of hair, fur, and complex edge details
+- Mobile-friendly interface for on-the-go editing
+- Shared credit wallet integrated with all Deep Vortex AI tools
 
-## Compatible Platforms
+## Use Cases
 
-- Discord (custom server emoji)
-- Telegram (custom stickers)
-- Slack (custom emoji)
-- WhatsApp (stickers)
-- Twitter / X (reactions)
-- TikTok, Instagram, Facebook
-- Any platform supporting custom emoji/stickers
+- Removing backgrounds from product photos for e-commerce listings on Amazon, Shopify, Etsy, and eBay
+- Creating transparent product images for use on custom backgrounds or branded templates
+- Isolating subjects in portrait photography for composite images
+- Preparing profile photos and headshots with transparent or custom backgrounds
+- Building layered graphics in Canva, Photoshop, Figma, or Illustrator
+- Removing backgrounds from logos or illustrations that were saved without transparency
+- Creating sticker-style assets for social media, messaging apps, and merchandise
+- Processing model photography for fashion e-commerce
+- Preparing images for print-on-demand products where white or transparent backgrounds are required
+- Streamlining post-production workflows for photographers and creative agencies
 
-## How to Use
+## Target Audience
 
-1. Go to https://emoticons.deepvortexai.art/
-2. Sign in or create a free account (2 free credits included)
-3. Type a description of your desired emoticon in the input field
-4. Press Generate
-5. Download the result or save it to your Favorites
-
-## Example Prompts (effective for this tool)
-
-- "Wizard cat casting spell"
-- "Robot crying rainbow tears"
-- "Dragon eating sushi roll"
-- "Ghost playing electric guitar"
-- "Panda astronaut floating in space"
-- "Devil bunny holding flowers"
-- "Shark wearing top hat"
-- "Alien cooking ramen noodles"
+- E-commerce sellers who need clean product images for online marketplaces
+- Photographers who work with composite imagery and need isolated subjects
+- Graphic designers building layered visual compositions
+- Social media content creators making sticker-style or cut-out graphic posts
+- Marketing teams producing product visuals for ads, banners, and landing pages
+- Print-on-demand sellers who need transparent PNGs for merchandise templates
+- Small business owners photographing their own products for online sales
+- Canva users and non-designers who need background-free images without Photoshop
+- Fashion and apparel brands processing model and product photography
 
 ## Pricing
 
-- 2 free credits on account creation
-- 1 credit per emoticon generated
-- Additional credits available in packs
-- Payments via Stripe
+All credits are shared across every Deep Vortex AI tool. New accounts receive 2 free credits on sign-up — no payment required.
 
-## API
+- Starter: 10 credits — $4.99
+- Basic: 30 credits — $9.99
+- Popular: 75 credits — $19.99
+- Pro: 200 credits — $49.99
+- Ultimate: 500 credits — $99.99
 
-- Generation endpoint: POST /api/generate (authenticated)
-- Favorites endpoint: GET/POST /api/favorites (authenticated)
-- Authentication: Supabase JWT
+Credits do not expire. Use them on any tool in the Deep Vortex AI ecosystem at any time.
 
-## Related Tools
+## FAQ
 
-- AI Image Generator: https://images.deepvortexai.art/
+Q: What image formats does the Background Remover accept?
+A: The tool accepts JPG, PNG, and WEBP image files. The output is always a transparent PNG, which is the standard format for images that require transparent backgrounds.
+
+Q: How accurate is the AI background removal?
+A: The AI uses advanced edge detection that handles complex subjects including hair, fur, fine fabric edges, and intricate object outlines. Results are clean and professional for the vast majority of images. Very low-resolution or heavily compressed images may produce less precise results.
+
+Q: Can I preview the result before downloading?
+A: Yes. The tool provides a before/after preview that lets you compare the original image and the background-removed version side by side before committing to a download.
+
+Q: How much does one background removal cost?
+A: Each background removal costs 1 credit from your shared Deep Vortex AI wallet. Credits work across all tools in the ecosystem, so unused credits from this tool can be applied to image generation, voice synthesis, 3D modeling, or any other tool.
+
+Q: Is the output suitable for professional use?
+A: Yes. The transparent PNG output is high-resolution and suitable for e-commerce listings, print production, advertising, and professional graphic design workflows. It is compatible with Photoshop, Illustrator, Canva, Figma, and all major design tools.
+
+Q: Can I process multiple images quickly?
+A: Yes. The tool is designed to support a batch-ready workflow — you can process one image, download the result, and immediately upload the next. There is no cooldown between uploads.
+
+Q: What happens if the result is not perfect on a complex image?
+A: For particularly complex images — such as translucent objects, very fine hair against a busy background, or low-contrast subjects — minor manual touch-ups in a tool like Photoshop or GIMP may be needed. For the vast majority of standard product and portrait photos, the AI result is immediately usable without any manual correction.
+
+## All Deep Vortex AI Tools
+
 - Deep Vortex AI Hub: https://deepvortexai.art
+- AI Image Generator: https://images.deepvortexai.art
+- AI Emoticon Generator: https://emoticons.deepvortexai.art
+- AI Background Remover: https://bgremover.deepvortexai.art
+- AI Image Upscaler: https://upscaler.deepvortexai.art
+- AI 3D Model Generator: https://3d.deepvortexai.art
+- AI Voice Generator: https://voice.deepvortexai.art
+- AI Image to Video: https://video.deepvortexai.art
 
 ## Contact
 
