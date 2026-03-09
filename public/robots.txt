@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://emoticons.deepvortexai.art/sitemap.xml
+Sitemap: https://bgremover.deepvortexai.art/sitemap.xml
