@@ -104,6 +104,11 @@ export default function Header() {
             <span className="pill-text">Buy Credits</span>
           </button>
 
+          <a href="/how-to-use" className="hub-pill how-to-use-pill" title="How to use this tool">
+            <span className="pill-icon">📖</span>
+            <span className="pill-text">How to Use</span>
+          </a>
+
           <button
             className="hub-pill favorites-pill"
             onClick={() => setShowFavoritesModal(true)}

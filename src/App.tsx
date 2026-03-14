@@ -8,6 +8,7 @@ import { PricingModal } from './components/PricingModal'
 import { Notification } from './components/Notification'
 import { useCredits } from './hooks/useCredits'
 import { AuthCallback } from './pages/AuthCallback'
+import { HowToUsePage } from './pages/HowToUse'
 import { Gallery } from './components/Gallery'
 
 const CREDIT_REFRESH_ERROR = 'Payment successful, but there was a temporary issue syncing your credits. Please refresh the page to see your updated balance.'
@@ -450,6 +451,9 @@ function App() {
         <AuthCallback />
       </AuthProvider>
     )
+  }
+  if (path === '/how-to-use') {
+    return <HowToUsePage />
   }
 
   return (
