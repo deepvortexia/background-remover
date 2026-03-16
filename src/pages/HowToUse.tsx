@@ -1,5 +1,6 @@
 const otherTools = [
   { name: "Image Generator", desc: "AI artwork from text", url: "https://images.deepvortexai.art", icon: "🖼️" },
+  { name: "Avatar Generator", desc: "AI portrait styles", url: "https://avatar.deepvortexai.art", icon: "🎭" },
   { name: "Image Upscaler", desc: "Enhance resolution with AI", url: "https://upscaler.deepvortexai.art", icon: "🔍" },
   { name: "3D Generator", desc: "Transform images into 3D models", url: "https://3d.deepvortexai.art", icon: "🧊" },
   { name: "Voice Generator", desc: "AI text-to-speech generation", url: "https://voice.deepvortexai.art", icon: "🎙️" },
