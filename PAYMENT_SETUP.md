@@ -127,7 +127,7 @@ You can create products in Stripe Dashboard, or the API will create them dynamic
 ### 2. Configure Webhook
 
 1. Go to **Stripe Dashboard** > **Developers** > **Webhooks**
-2. Add endpoint: `https://deepvortexai.art/api/webhook`
+2. Add endpoint: `https://deepvortexai.com/api/webhook`
 3. Select event: `checkout.session.completed`
 4. Copy the **Signing secret** and add it to `STRIPE_WEBHOOK_SECRET`
 
