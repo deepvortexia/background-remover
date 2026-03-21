@@ -52,6 +52,11 @@ function AppContent() {
   const [favRefreshKey, setFavRefreshKey] = useState(0)
   const [favSaving, setFavSaving] = useState(false)
   const [favSaved, setFavSaved] = useState(false)
+  const [loadingStage, setLoadingStage] = useState<0|1|2|3>(0)
+  const [loadingProgress, setLoadingProgress] = useState(0)
+  const [elapsedSeconds, setElapsedSeconds] = useState(0)
+  const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const elapsedIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const { user, session, loading } = useAuth()
   const { hasCredits, refreshProfile } = useCredits()
@@ -139,13 +144,25 @@ function AppContent() {
     if (!user) { setError('Please sign in to remove backgrounds'); setIsAuthModalOpen(true); return }
     if (!hasCredits) { setError('You have run out of credits. Please purchase more to continue.'); setIsPricingModalOpen(true); return }
 
+    const clearIntervals = () => {
+      if (progressIntervalRef.current) { clearInterval(progressIntervalRef.current); progressIntervalRef.current = null; }
+      if (elapsedIntervalRef.current) { clearInterval(elapsedIntervalRef.current); elapsedIntervalRef.current = null; }
+    }
+
     setIsLoading(true)
     setError('')
     setToast(null)
+    setLoadingStage(1); setLoadingProgress(0); setElapsedSeconds(0);
+    elapsedIntervalRef.current = setInterval(() => setElapsedSeconds(s => s + 1), 1000);
 
     try {
+      setLoadingProgress(5);
       const dataUrl = await compressImage(uploadedFile)
       const base64 = dataUrl.split(',')[1]
+      setLoadingProgress(10); setLoadingStage(2);
+      progressIntervalRef.current = setInterval(() => {
+        setLoadingProgress(prev => { const gap = 85 - prev; return gap < 0.05 ? prev : prev + gap * 0.003; });
+      }, 100);
 
       const token = session?.access_token
       const controller = new AbortController()
@@ -161,6 +178,7 @@ function AppContent() {
         })
       } catch (fetchErr: any) {
         clearTimeout(timeout)
+        clearIntervals();
         if (fetchErr.name === 'AbortError') {
           setToast({ title: 'Request Timed Out', message: 'The processing took too long. Please try again. No credits were deducted.', type: 'warning' })
         } else {
@@ -169,6 +187,7 @@ function AppContent() {
         return
       }
       clearTimeout(timeout)
+      if (progressIntervalRef.current) { clearInterval(progressIntervalRef.current); progressIntervalRef.current = null; }
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}))
@@ -193,13 +212,21 @@ function AppContent() {
         return
       }
 
+      setLoadingStage(3); setLoadingProgress(85);
+      await new Promise<void>(resolve => {
+        let p = 85;
+        const finalize = setInterval(() => { p += 3; setLoadingProgress(Math.min(p, 100)); if (p >= 100) { clearInterval(finalize); resolve(); } }, 40);
+      });
+
       const data = await response.json()
       setResultImage(data.image)
       await refreshProfile()
     } catch (err: any) {
       setToast({ title: 'Processing Failed', message: err.message || 'An unexpected error occurred.', type: 'error' })
     } finally {
+      clearIntervals();
       setIsLoading(false)
+      setLoadingStage(0); setLoadingProgress(0);
     }
   }
 
@@ -338,9 +365,32 @@ function AppContent() {
 
         {isLoading && (
           <div className="loading-section">
-            <div className="loading-spinner-large"></div>
-            <p className="loading-message">Removing background... ✨</p>
-            <p className="loading-hint">This usually takes 3-8 seconds</p>
+            <div className="progress-stages">
+              <div className={`progress-stage${loadingStage === 1 ? ' stage-active' : loadingStage > 1 ? ' stage-done' : ''}`}>
+                <div className="stage-dot" />
+                <span>Uploading image...</span>
+              </div>
+              <div className={`progress-stage${loadingStage === 2 ? ' stage-active' : loadingStage > 2 ? ' stage-done' : ''}`}>
+                <div className="stage-dot" />
+                <span>AI is animating your image...</span>
+              </div>
+              <div className={`progress-stage${loadingStage === 3 ? ' stage-active' : ''}`}>
+                <div className="stage-dot" />
+                <span>Finalizing video...</span>
+              </div>
+            </div>
+            <div className="progress-bar-wrapper">
+              <div className="progress-bar-track">
+                <div className="progress-bar-fill" style={{ width: `${loadingProgress}%` }} />
+              </div>
+              {loadingProgress > 0 && (
+                <div className="progress-bar-tip" style={{ left: `${loadingProgress}%` }} />
+              )}
+            </div>
+            <div className="progress-footer">
+              <span className="progress-percent">{Math.round(loadingProgress)}%</span>
+              <span className="progress-elapsed">{elapsedSeconds}s...</span>
+            </div>
           </div>
         )}
 
