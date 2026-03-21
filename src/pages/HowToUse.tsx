@@ -1,13 +1,13 @@
 const otherTools = [
-  { name: "Image Generator", desc: "AI artwork from text", url: "https://images.deepvortexai.art", icon: "🖼️" },
-  { name: "Avatar Generator", desc: "AI portrait styles", url: "https://avatar.deepvortexai.art", icon: "🎭" },
-  { name: "Image Upscaler", desc: "Enhance resolution with AI", url: "https://upscaler.deepvortexai.art", icon: "🔍" },
-  { name: "3D Generator", desc: "Transform images into 3D models", url: "https://3d.deepvortexai.art", icon: "🧊" },
-  { name: "Voice Generator", desc: "AI text-to-speech generation", url: "https://voice.deepvortexai.art", icon: "🎙️" },
-  { name: "Emoticon Generator", desc: "Custom AI emoji creation", url: "https://emoticons.deepvortexai.art", icon: "😀" },
-  { name: "Image to Video", desc: "Animate any image with AI", url: "https://video.deepvortexai.art", icon: "🎬" },
-  { name: "AI Chat Suite", desc: "4 frontier models in one place", url: "https://chat.deepvortexai.art", icon: "💬" },
-  { name: "Deep Vortex Hub", desc: "All AI tools in one ecosystem", url: "https://deepvortexai.art", icon: "🌐" },
+  { name: "Image Generator", desc: "AI artwork from text", url: "https://images.deepvortexai.com", icon: "🖼️" },
+  { name: "Avatar Generator", desc: "AI portrait styles", url: "https://avatar.deepvortexai.com", icon: "🎭" },
+  { name: "Image Upscaler", desc: "Enhance resolution with AI", url: "https://upscaler.deepvortexai.com", icon: "🔍" },
+  { name: "3D Generator", desc: "Transform images into 3D models", url: "https://3d.deepvortexai.com", icon: "🧊" },
+  { name: "Voice Generator", desc: "AI text-to-speech generation", url: "https://voice.deepvortexai.com", icon: "🎙️" },
+  { name: "Emoticon Generator", desc: "Custom AI emoji creation", url: "https://emoticons.deepvortexai.com", icon: "😀" },
+  { name: "Image to Video", desc: "Animate any image with AI", url: "https://video.deepvortexai.com", icon: "🎬" },
+  { name: "AI Chat Suite", desc: "4 frontier models in one place", url: "https://chat.deepvortexai.com", icon: "💬" },
+  { name: "Deep Vortex Hub", desc: "All AI tools in one ecosystem", url: "https://deepvortexai.com", icon: "🌐" },
 ]
 
 export function HowToUsePage() {
@@ -16,7 +16,7 @@ export function HowToUsePage() {
 
       {/* Header */}
       <header style={{ textAlign: 'center', padding: '2.5rem 1rem 1rem', borderBottom: '1px solid rgba(212,175,55,0.15)' }}>
-        <a href="https://bgremover.deepvortexai.art" style={{ display: 'inline-block', color: 'rgba(212,175,55,0.8)', textDecoration: 'none', fontSize: '0.85rem', marginBottom: '1.2rem', letterSpacing: '0.5px' }}>
+        <a href="https://bgremover.deepvortexai.com" style={{ display: 'inline-block', color: 'rgba(212,175,55,0.8)', textDecoration: 'none', fontSize: '0.85rem', marginBottom: '1.2rem', letterSpacing: '0.5px' }}>
           ← Back to Background Remover
         </a>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
@@ -94,7 +94,7 @@ export function HowToUsePage() {
 
         {/* CTA */}
         <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-          <a href="https://bgremover.deepvortexai.art" style={{ display: 'inline-block', padding: '0.7rem 2rem', background: 'linear-gradient(135deg, #B8860B, #D4AF37)', color: '#0a0a0a', borderRadius: '50px', fontWeight: 700, fontSize: '0.95rem', textDecoration: 'none', letterSpacing: '0.5px' }}>
+          <a href="https://bgremover.deepvortexai.com" style={{ display: 'inline-block', padding: '0.7rem 2rem', background: 'linear-gradient(135deg, #B8860B, #D4AF37)', color: '#0a0a0a', borderRadius: '50px', fontWeight: 700, fontSize: '0.95rem', textDecoration: 'none', letterSpacing: '0.5px' }}>
             Remove a Background →
           </a>
         </div>
@@ -102,7 +102,7 @@ export function HowToUsePage() {
       </main>
 
       <footer style={{ textAlign: 'center', padding: '2rem 1rem', borderTop: '1px solid rgba(212,175,55,0.15)', color: 'rgba(255,255,255,0.35)', fontSize: '0.8rem' }}>
-        <a href="https://deepvortexai.art" style={{ color: 'rgba(212,175,55,0.6)', textDecoration: 'none' }}>Deep Vortex AI</a> — Building the complete AI creative ecosystem
+        <a href="https://deepvortexai.com" style={{ color: 'rgba(212,175,55,0.6)', textDecoration: 'none' }}>Deep Vortex AI</a> — Building the complete AI creative ecosystem
       </footer>
     </div>
   )

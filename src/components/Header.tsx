@@ -68,7 +68,7 @@ export default function Header() {
       <header className="hub-header" role="banner">
         {!isEmbedded && (
           <a
-            href="https://deepvortexai.art"
+            href="https://deepvortexai.com"
             className="back-to-hub-link"
           >
             ← Back to Hub
