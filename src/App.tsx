@@ -479,7 +479,7 @@ function AppContent() {
             </svg>
             Quora
           </a>
-          <a href="mailto:admin@deepvortexai.xyz" className="footer-contact-btn">Contact Us</a>
+          <a href="mailto:admin@deepvortexai.com" className="footer-contact-btn">Contact Us</a>
         </div>
       </footer>
 

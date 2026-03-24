@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 // DISABLED — this endpoint does NOT process payments.
 // The universal Stripe webhook handler for ALL apps (hub, emoticon, image-gen) is at:
-//   https://images.deepvortexai.com/api/webhook
+//   https://deepvortexai.com/api/webhook
 //
 // Only ONE Stripe webhook endpoint should be registered in the Stripe Dashboard.
 // If this URL is accidentally called, return 200 so Stripe does not retry.
