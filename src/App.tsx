@@ -473,12 +473,6 @@ function AppContent() {
             </svg>
             X
           </a>
-          <a href="https://deepvortexai.quora.com/" target="_blank" rel="noopener noreferrer" className="footer-social-link">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-              <path d="M12.071 0C5.4 0 0 5.4 0 12.071c0 6.67 5.4 12.071 12.071 12.071 6.67 0 12.071-5.4 12.071-12.071C24.142 5.4 18.742 0 12.07 0zm2.028 18.383c-.5-.998-.954-1.88-1.907-1.88h-.213l1.193-2.647h-.002c-.362.12-.743.18-1.128.18-2.287 0-3.996-1.837-3.996-4.177s1.709-4.177 3.997-4.177 3.996 1.837 3.996 4.177c0 1.29-.496 2.432-1.32 3.29.277.397.533.812.793 1.227l.15.238c.278.442.55.886.832 1.33l-2.395 2.44zm-2.057-4.997c1.18 0 1.94-1.083 1.94-2.51 0-1.428-.76-2.511-1.94-2.511s-1.94 1.083-1.94 2.511c0 1.428.76 2.511 1.94 2.511z"/>
-            </svg>
-            Quora
-          </a>
           <a href="mailto:admin@deepvortexai.com" className="footer-contact-btn">Contact Us</a>
         </div>
       </footer>
